@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matemáticas para Niños</title>
+    <style>
+        /* Estilos CSS */
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-color: #f0f9ff;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #ff6b6b;
+        }
+        .ejercicio {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px auto;
+            max-width: 500px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .operacion {
+            font-size: 24px;
+            margin: 10px 0;
+        }
+        input {
+            font-size: 20px;
+            width: 50px;
+            text-align: center;
+            border: 2px solid #4CAF50;
+            border-radius: 5px;
+            padding: 5px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #resultado {
+            font-weight: bold;
+            font-size: 20px;
+            margin: 10px;
+        }
+        .correcto {
+            color: #4CAF50;
+        }
+        .incorrecto {
+            color: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <h1>¡Aprende Matemáticas!</h1>
+    <div id="contenedor-ejercicios">
+        <!-- Los ejercicios se cargarán aquí con JavaScript -->
+    </div>
+    <div id="resultado"></div>
+    <button id="verificar-btn">Comprobar</button>
+    <button id="reiniciar-btn" style="display: none;">Volver a Intentar</button>
+
+    <script>
+        // Datos de los ejercicios (basados en tu imagen)
+        const ejercicios = [
+            {
+                pregunta: "Hay 5 peras y me como 2. ¿Cuántas quedan?",
+                operacion: "5 - 2 =",
+                respuesta: 3
+            },
+            {
+                pregunta: "Hay 6 magdalenas y me como 2. ¿Cuántas quedan?",
+                operacion: "6 - 2 =",
+                respuesta: 4
+            },
+            {
+                pregunta: "Tenía 10 galletas. Si me como 3, ¿cuántas me quedan?",
+                operacion: "10 - 3 =",
+                respuesta: 7
+            },
+            {
+                pregunta: "Tengo 7 mariquitas y encuentro 3. ¿Cuántas tengo en total?",
+                operacion: "7 + 3 =",
+                respuesta: 10
+            },
+            {
+                pregunta: "Tengo 5 flores y encuentro 3 más. ¿Cuántas tengo en total?",
+                operacion: "5 + 3 =",
+                respuesta: 8
+            }
+        ];
+
+        let ejercicioActual = 0;
+        let puntaje = 0;
+
+        // Cargar ejercicio inicial
+        function cargarEjercicio() {
+            const ejercicio = ejercicios[ejercicioActual];
+            document.getElementById("contenedor-ejercicios").innerHTML = `
+                <div class="ejercicio">
+                    <p>${ejercicio.pregunta}</p>
+                    <div class="operacion">${ejercicio.operacion} <input type="number" id="respuesta"></div>
+                </div>
+            `;
+            document.getElementById("resultado").innerHTML = "";
+            document.getElementById("reiniciar-btn").style.display = "none";
+        }
+
+        // Verificar respuesta
+        document.getElementById("verificar-btn").addEventListener("click", function() {
+            const respuestaUsuario = parseInt(document.getElementById("respuesta").value);
+            const respuestaCorrecta = ejercicios[ejercicioActual].respuesta;
+            const resultadoDiv = document.getElementById("resultado");
+
+            if (respuestaUsuario === respuestaCorrecta) {
+                resultadoDiv.innerHTML = "¡Correcto! 🎉";
+                resultadoDiv.className = "correcto";
+                puntaje++;
+            } else {
+                resultadoDiv.innerHTML = `Incorrecto. La respuesta es: ${respuestaCorrecta}`;
+                resultadoDiv.className = "incorrecto";
+            }
+
+            ejercicioActual++;
+
+            if (ejercicioActual < ejercicios.length) {
+                setTimeout(cargarEjercicio, 2000); // Siguiente ejercicio después de 2 segundos
+            } else {
+                document.getElementById("verificar-btn").style.display = "none";
+                document.getElementById("reiniciar-btn").style.display = "inline-block";
+                resultadoDiv.innerHTML += `<br><br>¡Terminaste! Puntaje: ${puntaje}/${ejercicios.length}`;
+            }
+        });
+
+        // Reiniciar juego
+        document.getElementById("reiniciar-btn").addEventListener("click", function() {
+            ejercicioActual = 0;
+            puntaje = 0;
+            document.getElementById("verificar-btn").style.display = "inline-block";
+            cargarEjercicio();
+        });
+
+        // Iniciar la aplicación
+        cargarEjercicio();
+    </script>
+</body>
+</html>
