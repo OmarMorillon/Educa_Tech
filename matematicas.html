@@ -11,53 +11,93 @@
             background-color: #f0f9ff;
             text-align: center;
             padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
         }
         h1 {
             color: #ff6b6b;
+            margin-bottom: 20px;
         }
         .ejercicio {
             background-color: white;
             border-radius: 10px;
-            padding: 15px;
+            padding: 20px;
             margin: 15px auto;
-            max-width: 500px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .ejercicio-img {
+            max-width: 200px;
+            height: auto;
+            margin: 10px auto;
+            display: block;
+            border-radius: 8px;
         }
         .operacion {
             font-size: 24px;
-            margin: 10px 0;
+            margin: 15px 0;
         }
         input {
             font-size: 20px;
-            width: 50px;
+            width: 60px;
             text-align: center;
             border: 2px solid #4CAF50;
             border-radius: 5px;
-            padding: 5px;
+            padding: 8px;
+            margin: 0 5px;
         }
         button {
             background-color: #4CAF50;
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 12px 24px;
             margin: 10px;
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
+            transition: background-color 0.3s;
         }
         button:hover {
             background-color: #45a049;
         }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
         #resultado {
             font-weight: bold;
             font-size: 20px;
-            margin: 10px;
+            margin: 15px;
+            min-height: 30px;
         }
         .correcto {
             color: #4CAF50;
         }
         .incorrecto {
             color: #f44336;
+        }
+        .botones-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .volver-menu {
+            background-color: #2E86C1;
+        }
+        .volver-menu:hover {
+            background-color: #2874A6;
+        }
+
+        @media (max-width: 600px) {
+            .ejercicio {
+                padding: 15px;
+            }
+            .ejercicio-img {
+                max-width: 150px;
+            }
+            button {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -67,41 +107,50 @@
         <!-- Los ejercicios se cargarán aquí con JavaScript -->
     </div>
     <div id="resultado"></div>
-    <button id="verificar-btn">Comprobar</button>
-    <button id="reiniciar-btn" style="display: none;">Volver a Intentar</button>
+    <div class="botones-container">
+        <button id="verificar-btn">Comprobar</button>
+        <button id="siguiente-btn" style="display: none;">Siguiente Ejercicio</button>
+        <button id="reiniciar-btn" class="volver-menu" style="display: none;">Volver al Menú</button>
+    </div>
 
     <script>
-        // Datos de los ejercicios (basados en tu imagen)
+        // Datos de los ejercicios con imágenes
         const ejercicios = [
             {
                 pregunta: "Hay 5 peras y me como 2. ¿Cuántas quedan?",
                 operacion: "5 - 2 =",
-                respuesta: 3
+                respuesta: 3,
+                imagen: "https://cdn.pixabay.com/photo/2017/09/12/11/56/pears-2742299_640.png"
             },
             {
                 pregunta: "Hay 6 magdalenas y me como 2. ¿Cuántas quedan?",
                 operacion: "6 - 2 =",
-                respuesta: 4
+                respuesta: 4,
+                imagen: "https://cdn.pixabay.com/photo/2017/01/11/11/33/cake-1971552_640.jpg"
             },
             {
                 pregunta: "Tenía 10 galletas. Si me como 3, ¿cuántas me quedan?",
                 operacion: "10 - 3 =",
-                respuesta: 7
+                respuesta: 7,
+                imagen: "https://cdn.pixabay.com/photo/2014/01/20/18/25/cookie-248636_640.jpg"
             },
             {
                 pregunta: "Tengo 7 mariquitas y encuentro 3. ¿Cuántas tengo en total?",
                 operacion: "7 + 3 =",
-                respuesta: 10
+                respuesta: 10,
+                imagen: "https://cdn.pixabay.com/photo/2017/07/04/10/07/ladybug-2469988_640.png"
             },
             {
                 pregunta: "Tengo 5 flores y encuentro 3 más. ¿Cuántas tengo en total?",
                 operacion: "5 + 3 =",
-                respuesta: 8
+                respuesta: 8,
+                imagen: "https://cdn.pixabay.com/photo/2017/05/07/19/32/flowers-2295431_640.jpg"
             }
         ];
 
         let ejercicioActual = 0;
         let puntaje = 0;
+        let esperandoRespuesta = false;
 
         // Cargar ejercicio inicial
         function cargarEjercicio() {
@@ -109,16 +158,36 @@
             document.getElementById("contenedor-ejercicios").innerHTML = `
                 <div class="ejercicio">
                     <p>${ejercicio.pregunta}</p>
-                    <div class="operacion">${ejercicio.operacion} <input type="number" id="respuesta"></div>
+                    <img src="${ejercicio.imagen}" alt="Imagen del ejercicio" class="ejercicio-img">
+                    <div class="operacion">${ejercicio.operacion} <input type="number" id="respuesta" inputmode="numeric"></div>
                 </div>
             `;
             document.getElementById("resultado").innerHTML = "";
-            document.getElementById("reiniciar-btn").style.display = "none";
+            document.getElementById("verificar-btn").style.display = "inline-block";
+            document.getElementById("siguiente-btn").style.display = "none";
+            document.getElementById("verificar-btn").disabled = false;
+            
+            // Enfocar automáticamente el input
+            document.getElementById("respuesta").focus();
+            
+            // Agregar evento para Enter
+            document.getElementById("respuesta").addEventListener("keypress", function(e) {
+                if (e.key === "Enter" && !esperandoRespuesta) {
+                    verificarRespuesta();
+                }
+            });
         }
 
         // Verificar respuesta
-        document.getElementById("verificar-btn").addEventListener("click", function() {
-            const respuestaUsuario = parseInt(document.getElementById("respuesta").value);
+        function verificarRespuesta() {
+            if (esperandoRespuesta) return;
+            
+            esperandoRespuesta = true;
+            const botonVerificar = document.getElementById("verificar-btn");
+            botonVerificar.disabled = true;
+            
+            const respuestaInput = document.getElementById("respuesta");
+            const respuestaUsuario = parseInt(respuestaInput.value);
             const respuestaCorrecta = ejercicios[ejercicioActual].respuesta;
             const resultadoDiv = document.getElementById("resultado");
 
@@ -131,24 +200,39 @@
                 resultadoDiv.className = "incorrecto";
             }
 
-            ejercicioActual++;
+            document.getElementById("verificar-btn").style.display = "none";
+            document.getElementById("siguiente-btn").style.display = "inline-block";
+            esperandoRespuesta = false;
+        }
 
+        // Siguiente ejercicio
+        document.getElementById("siguiente-btn").addEventListener("click", function() {
+            ejercicioActual++;
             if (ejercicioActual < ejercicios.length) {
-                setTimeout(cargarEjercicio, 2000); // Siguiente ejercicio después de 2 segundos
+                cargarEjercicio();
             } else {
+                // Mostrar resultados finales
+                document.getElementById("contenedor-ejercicios").innerHTML = `
+                    <div class="ejercicio">
+                        <h3>¡Completaste todos los ejercicios!</h3>
+                        <p>Obtuviste ${puntaje} de ${ejercicios.length} correctos.</p>
+                        <img src="https://cdn.pixabay.com/photo/2016/08/12/20/14/medal-1589609_640.png" alt="Medalla" class="ejercicio-img">
+                    </div>
+                `;
+                document.getElementById("resultado").innerHTML = "";
                 document.getElementById("verificar-btn").style.display = "none";
+                document.getElementById("siguiente-btn").style.display = "none";
                 document.getElementById("reiniciar-btn").style.display = "inline-block";
-                resultadoDiv.innerHTML += `<br><br>¡Terminaste! Puntaje: ${puntaje}/${ejercicios.length}`;
             }
         });
 
-        // Reiniciar juego
+        // Volver al menú principal
         document.getElementById("reiniciar-btn").addEventListener("click", function() {
-            ejercicioActual = 0;
-            puntaje = 0;
-            document.getElementById("verificar-btn").style.display = "inline-block";
-            cargarEjercicio();
+            window.location.href = "index.html";
         });
+
+        // Asignar evento al botón Comprobar
+        document.getElementById("verificar-btn").addEventListener("click", verificarRespuesta);
 
         // Iniciar la aplicación
         cargarEjercicio();
