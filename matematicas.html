@@ -3,145 +3,410 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Matemáticas para Niños</title>
+    <title>¡Matemáticas Divertidas!</title>
     <style>
-        /* Estilos CSS */
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Nunito:wght@400;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Comic Sans MS', cursive, sans-serif;
-            background-color: #f0f9ff;
-            text-align: center;
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
             padding: 20px;
-            max-width: 800px;
+        }
+
+        .container {
+            max-width: 900px;
             margin: 0 auto;
         }
-        h1 {
-            color: #ff6b6b;
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2.5em;
+            color: #4c51bf;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 15px;
             margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
         }
-        .ejercicio {
-            background-color: white;
+
+        .progress-bar {
+            background: linear-gradient(90deg, #ff6b6b, #ffa726);
+            height: 12px;
             border-radius: 10px;
-            padding: 20px;
-            margin: 15px auto;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: width 0.5s ease;
+            position: relative;
+            overflow: hidden;
         }
+
+        .progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .ejercicio-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 3px solid transparent;
+            background-clip: padding-box;
+            transform: scale(0.95);
+            animation: slideIn 0.5s ease forwards;
+        }
+
+        @keyframes slideIn {
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .pregunta {
+            font-size: 1.4em;
+            color: #4c51bf;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        .imagen-container {
+            text-align: center;
+            margin: 25px 0;
+            position: relative;
+        }
+
         .ejercicio-img {
             max-width: 200px;
             height: auto;
-            margin: 10px auto;
-            display: block;
-            border-radius: 8px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease;
         }
-        .operacion {
-            font-size: 24px;
-            margin: 15px 0;
+
+        .ejercicio-img:hover {
+            transform: scale(1.05) rotate(2deg);
         }
-        input {
-            font-size: 20px;
-            width: 60px;
+
+        .operacion-container {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px 0;
             text-align: center;
-            border: 2px solid #4CAF50;
-            border-radius: 5px;
-            padding: 8px;
-            margin: 0 5px;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.1);
         }
-        button {
-            background-color: #4CAF50;
+
+        .operacion {
+            font-size: 2.2em;
             color: white;
-            border: none;
-            padding: 12px 24px;
-            margin: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
+            font-weight: 800;
+            font-family: 'Fredoka One', cursive;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
         }
-        button:hover {
-            background-color: #45a049;
+
+        .input-respuesta {
+            font-size: 1.8em;
+            width: 80px;
+            height: 60px;
+            text-align: center;
+            border: 4px solid #ffa726;
+            border-radius: 15px;
+            background: white;
+            color: #4c51bf;
+            font-weight: 800;
+            font-family: 'Fredoka One', cursive;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
-        button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
+
+        .input-respuesta:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
         }
-        #resultado {
-            font-weight: bold;
-            font-size: 20px;
-            margin: 15px;
-            min-height: 30px;
-        }
-        .correcto {
-            color: #4CAF50;
-        }
-        .incorrecto {
-            color: #f44336;
-        }
+
         .botones-container {
             display: flex;
             justify-content: center;
+            gap: 15px;
+            margin-top: 25px;
             flex-wrap: wrap;
         }
-        .volver-menu {
-            background-color: #2E86C1;
-        }
-        .volver-menu:hover {
-            background-color: #2874A6;
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Nunito', sans-serif;
+            position: relative;
+            overflow: hidden;
+            min-width: 150px;
         }
 
-        @media (max-width: 600px) {
-            .ejercicio {
-                padding: 15px;
-            }
-            .ejercicio-img {
-                max-width: 150px;
-            }
-            button {
-                padding: 10px 20px;
-                font-size: 14px;
-            }
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transition: all 0.5s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-verificar {
+            background: linear-gradient(135deg, #ff6b6b, #ffa726);
+            color: white;
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-verificar:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-siguiente {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            color: white;
+            box-shadow: 0 8px 25px rgba(78, 205, 196, 0.3);
+        }
+
+        .btn-siguiente:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(78, 205, 196, 0.4);
+        }
+
+        .btn-menu {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-menu:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .resultado {
+            font-weight: 800;
+            font-size: 1.5em;
+            margin: 20px 0;
+            text-align: center;
+            padding: 20px;
+            border-radius: 20px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.5s ease;
+        }
+
+        .correcto {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            color: white;
+            animation: bounceIn 0.6s ease;
+        }
+
+        .incorrecto {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+            animation: shake 0.6s ease;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+            20%, 40%, 60%, 80% { transform: translateX(10px); }
+        }
+
+        .final-card {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 40px;
+            border-radius: 25px;
+            animation: celebrar 2s ease infinite alternate;
+        }
+
+        @keyframes celebrar {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.02); }
+        }
+
+        .final-card h3 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2.2em;
+            margin-bottom: 20px;
+        }
+
+        .puntaje {
+            font-size: 1.8em;
+            font-weight: 800;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+        }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-element {
+            position: absolute;
+            font-size: 2em;
+            animation: float 6s ease-in-out infinite;
+            opacity: 0.1;
+        }
+
+        .floating-element:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
+        .floating-element:nth-child(2) { top: 20%; right: 10%; animation-delay: 1s; }
+        .floating-element:nth-child(3) { bottom: 30%; left: 20%; animation-delay: 2s; }
+        .floating-element:nth-child(4) { bottom: 10%; right: 20%; animation-delay: 3s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 10px; }
+            .header h1 { font-size: 2em; }
+            .operacion { font-size: 1.8em; }
+            .input-respuesta { width: 70px; height: 50px; font-size: 1.5em; }
+            .btn { padding: 12px 20px; font-size: 1em; min-width: 120px; }
+            .botones-container { flex-direction: column; align-items: center; }
         }
     </style>
 </head>
 <body>
-    <h1>¡Aprende Matemáticas!</h1>
-    <div id="contenedor-ejercicios">
-        <!-- Los ejercicios se cargarán aquí con JavaScript -->
+    <div class="floating-elements">
+        <div class="floating-element">🔢</div>
+        <div class="floating-element">➕</div>
+        <div class="floating-element">➖</div>
+        <div class="floating-element">✨</div>
     </div>
-    <div id="resultado"></div>
-    <div class="botones-container">
-        <button id="verificar-btn">Comprobar</button>
-        <button id="siguiente-btn" style="display: none;">Siguiente Ejercicio</button>
-        <button id="reiniciar-btn" class="volver-menu" style="display: none;">Volver al Menú</button>
+
+    <div class="container">
+        <div class="header">
+            <h1>🧮 ¡Matemáticas Súper Divertidas! 🎉</h1>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <p id="progress-text">Ejercicio 1 de 5</p>
+        </div>
+
+        <div id="contenedor-ejercicios">
+            <!-- Los ejercicios se cargarán aquí -->
+        </div>
+
+        <div id="resultado" class="resultado"></div>
+
+        <div class="botones-container">
+            <button id="verificar-btn" class="btn btn-verificar">🎯 ¡Comprobar!</button>
+            <button id="siguiente-btn" class="btn btn-siguiente" style="display: none;">🚀 Siguiente</button>
+            <button id="reiniciar-btn" class="btn btn-menu" style="display: none;">🏠 Volver al Menú</button>
+        </div>
     </div>
 
     <script>
-        // Datos de los ejercicios con imágenes
         const ejercicios = [
             {
-                pregunta: "Hay 5 peras y me como 2. ¿Cuántas quedan?",
+                pregunta: "🍐 Hay 5 peras deliciosas y me como 2. ¿Cuántas peras me quedan?",
                 operacion: "5 - 2 =",
                 respuesta: 3,
                 imagen: "https://cdn.pixabay.com/photo/2017/09/12/11/56/pears-2742299_640.png"
             },
             {
-                pregunta: "Hay 6 magdalenas y me como 2. ¿Cuántas quedan?",
+                pregunta: "🧁 Tengo 6 magdalenas ricas y me como 2. ¿Cuántas magdalenas quedan?",
                 operacion: "6 - 2 =",
                 respuesta: 4,
                 imagen: "https://cdn.pixabay.com/photo/2017/01/11/11/33/cake-1971552_640.jpg"
             },
             {
-                pregunta: "Tenía 10 galletas. Si me como 3, ¿cuántas me quedan?",
+                pregunta: "🍪 Tenía 10 galletas crujientes. Si me como 3, ¿cuántas me quedan?",
                 operacion: "10 - 3 =",
                 respuesta: 7,
                 imagen: "https://cdn.pixabay.com/photo/2014/01/20/18/25/cookie-248636_640.jpg"
             },
             {
-                pregunta: "Tengo 7 mariquitas y encuentro 3. ¿Cuántas tengo en total?",
+                pregunta: "🐞 Tengo 7 mariquitas bonitas y encuentro 3 más. ¿Cuántas tengo en total?",
                 operacion: "7 + 3 =",
                 respuesta: 10,
                 imagen: "https://cdn.pixabay.com/photo/2017/07/04/10/07/ladybug-2469988_640.png"
             },
             {
-                pregunta: "Tengo 5 flores y encuentro 3 más. ¿Cuántas tengo en total?",
+                pregunta: "🌸 Tengo 5 flores hermosas y encuentro 3 más. ¿Cuántas tengo en total?",
                 operacion: "5 + 3 =",
                 respuesta: 8,
                 imagen: "https://cdn.pixabay.com/photo/2017/05/07/19/32/flowers-2295431_640.jpg"
@@ -152,25 +417,38 @@
         let puntaje = 0;
         let esperandoRespuesta = false;
 
-        // Cargar ejercicio inicial
+        function actualizarProgreso() {
+            const progreso = ((ejercicioActual + 1) / ejercicios.length) * 100;
+            document.getElementById("progress-bar").style.width = progreso + "%";
+            document.getElementById("progress-text").textContent = `Ejercicio ${ejercicioActual + 1} de ${ejercicios.length}`;
+        }
+
         function cargarEjercicio() {
             const ejercicio = ejercicios[ejercicioActual];
             document.getElementById("contenedor-ejercicios").innerHTML = `
-                <div class="ejercicio">
-                    <p>${ejercicio.pregunta}</p>
-                    <img src="${ejercicio.imagen}" alt="Imagen del ejercicio" class="ejercicio-img">
-                    <div class="operacion">${ejercicio.operacion} <input type="number" id="respuesta" inputmode="numeric"></div>
+                <div class="ejercicio-card">
+                    <div class="pregunta">${ejercicio.pregunta}</div>
+                    <div class="imagen-container">
+                        <img src="${ejercicio.imagen}" alt="Imagen del ejercicio" class="ejercicio-img">
+                    </div>
+                    <div class="operacion-container">
+                        <div class="operacion">
+                            ${ejercicio.operacion.split('=')[0]} = 
+                            <input type="number" id="respuesta" class="input-respuesta" inputmode="numeric" placeholder="?">
+                        </div>
+                    </div>
                 </div>
             `;
+            
             document.getElementById("resultado").innerHTML = "";
+            document.getElementById("resultado").className = "resultado";
             document.getElementById("verificar-btn").style.display = "inline-block";
             document.getElementById("siguiente-btn").style.display = "none";
             document.getElementById("verificar-btn").disabled = false;
             
-            // Enfocar automáticamente el input
+            actualizarProgreso();
             document.getElementById("respuesta").focus();
             
-            // Agregar evento para Enter
             document.getElementById("respuesta").addEventListener("keypress", function(e) {
                 if (e.key === "Enter" && !esperandoRespuesta) {
                     verificarRespuesta();
@@ -178,7 +456,6 @@
             });
         }
 
-        // Verificar respuesta
         function verificarRespuesta() {
             if (esperandoRespuesta) return;
             
@@ -191,47 +468,78 @@
             const respuestaCorrecta = ejercicios[ejercicioActual].respuesta;
             const resultadoDiv = document.getElementById("resultado");
 
-            if (respuestaUsuario === respuestaCorrecta) {
-                resultadoDiv.innerHTML = "¡Correcto! 🎉";
-                resultadoDiv.className = "correcto";
-                puntaje++;
-            } else {
-                resultadoDiv.innerHTML = `Incorrecto. La respuesta es: ${respuestaCorrecta}`;
-                resultadoDiv.className = "incorrecto";
-            }
+            setTimeout(() => {
+                if (respuestaUsuario === respuestaCorrecta) {
+                    resultadoDiv.innerHTML = "🎉 ¡Excelente! ¡Eres increíble! 🌟";
+                    resultadoDiv.className = "resultado correcto";
+                    puntaje++;
+                } else {
+                    resultadoDiv.innerHTML = `😊 ¡Casi! La respuesta correcta es: ${respuestaCorrecta}`;
+                    resultadoDiv.className = "resultado incorrecto";
+                }
 
-            document.getElementById("verificar-btn").style.display = "none";
-            document.getElementById("siguiente-btn").style.display = "inline-block";
-            esperandoRespuesta = false;
+                document.getElementById("verificar-btn").style.display = "none";
+                document.getElementById("siguiente-btn").style.display = "inline-block";
+                esperandoRespuesta = false;
+            }, 500);
         }
 
-        // Siguiente ejercicio
         document.getElementById("siguiente-btn").addEventListener("click", function() {
             ejercicioActual++;
             if (ejercicioActual < ejercicios.length) {
                 cargarEjercicio();
             } else {
-                // Mostrar resultados finales
-                document.getElementById("contenedor-ejercicios").innerHTML = `
-                    <div class="ejercicio">
-                        <h3>¡Completaste todos los ejercicios!</h3>
-                        <p>Obtuviste ${puntaje} de ${ejercicios.length} correctos.</p>
-                        <img src="https://cdn.pixabay.com/photo/2016/08/12/20/14/medal-1589609_640.png" alt="Medalla" class="ejercicio-img">
-                    </div>
-                `;
-                document.getElementById("resultado").innerHTML = "";
-                document.getElementById("verificar-btn").style.display = "none";
-                document.getElementById("siguiente-btn").style.display = "none";
-                document.getElementById("reiniciar-btn").style.display = "inline-block";
+                mostrarResultadoFinal();
             }
         });
 
-        // Volver al menú principal
+        function mostrarResultadoFinal() {
+            const porcentaje = Math.round((puntaje / ejercicios.length) * 100);
+            let mensaje = "";
+            let emoji = "";
+            
+            if (porcentaje === 100) {
+                mensaje = "¡PERFECTO! ¡Eres un genio de las matemáticas!";
+                emoji = "🏆✨";
+            } else if (porcentaje >= 80) {
+                mensaje = "¡Excelente trabajo! ¡Eres muy inteligente!";
+                emoji = "🥇🌟";
+            } else if (porcentaje >= 60) {
+                mensaje = "¡Buen trabajo! ¡Sigues mejorando!";
+                emoji = "🥈👏";
+            } else {
+                mensaje = "¡Sigue practicando! ¡Tú puedes!";
+                emoji = "🥉💪";
+            }
+
+            document.getElementById("contenedor-ejercicios").innerHTML = `
+                <div class="ejercicio-card final-card">
+                    <h3>${emoji} ${mensaje} ${emoji}</h3>
+                    <div class="puntaje">
+                        Obtuviste ${puntaje} de ${ejercicios.length} correctos
+                        <br>
+                        (${porcentaje}%)
+                    </div>
+                    <div class="imagen-container">
+                        <img src="https://cdn.pixabay.com/photo/2016/08/12/20/14/medal-1589609_640.png" alt="Medalla" class="ejercicio-img">
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById("resultado").innerHTML = "";
+            document.getElementById("verificar-btn").style.display = "none";
+            document.getElementById("siguiente-btn").style.display = "none";
+            document.getElementById("reiniciar-btn").style.display = "inline-block";
+            
+            // Actualizar progreso al 100%
+            document.getElementById("progress-bar").style.width = "100%";
+            document.getElementById("progress-text").textContent = "¡Completado!";
+        }
+
         document.getElementById("reiniciar-btn").addEventListener("click", function() {
             window.location.href = "index.html";
         });
 
-        // Asignar evento al botón Comprobar
         document.getElementById("verificar-btn").addEventListener("click", verificarRespuesta);
 
         // Iniciar la aplicación
