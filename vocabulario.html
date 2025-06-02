@@ -43,6 +43,47 @@
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
 
+        .menu-principal {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .categoria-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+
+        .categoria-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .categoria-card h3 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            color: #e91e63;
+        }
+
+        .categoria-card .emoji {
+            font-size: 3em;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .categoria-card p {
+            color: #666;
+            font-weight: 600;
+        }
+
         .progress-container {
             background: rgba(255, 255, 255, 0.9);
             border-radius: 20px;
@@ -191,14 +232,6 @@
         .texto-opcion {
             font-size: 1.2em;
             font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .imagen-opcion {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 15px;
             margin-bottom: 10px;
         }
 
@@ -353,12 +386,17 @@
             50% { transform: translateY(-20px) rotate(180deg); }
         }
 
+        .oculto {
+            display: none;
+        }
+
         @media (max-width: 768px) {
             .container { padding: 10px; }
             .header h1 { font-size: 2em; }
             .opciones-container { grid-template-columns: 1fr; gap: 15px; }
             .imagen-principal img { max-width: 200px; height: 150px; }
             .botones-container { flex-direction: column; align-items: center; }
+            .menu-principal { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -373,88 +411,286 @@
     <div class="container">
         <div class="header">
             <h1>📚 ¡Aprende Vocabulario! 🌟</h1>
-            <div class="progress-container">
+            <div id="progress-section" class="progress-container oculto">
                 <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
             </div>
-            <p id="progress-text">Palabra 1 de 8</p>
+            <p id="progress-text" class="oculto">Palabra 1 de 8</p>
         </div>
 
-        <div id="contenedor-ejercicios">
+        <!-- Menú Principal -->
+        <div id="menu-principal" class="menu-principal">
+            <div class="categoria-card" onclick="iniciarCategoria('frutas')">
+                <span class="emoji">🍎</span>
+                <h3>Frutas</h3>
+                <p>Aprende sobre deliciosas frutas</p>
+            </div>
+            <div class="categoria-card" onclick="iniciarCategoria('animales')">
+                <span class="emoji">🐶</span>
+                <h3>Animales</h3>
+                <p>Conoce diferentes animales</p>
+            </div>
+            <div class="categoria-card" onclick="iniciarCategoria('utiles')">
+                <span class="emoji">✏️</span>
+                <h3>Útiles Escolares</h3>
+                <p>Objetos que usas para estudiar</p>
+            </div>
+            <div class="categoria-card" onclick="iniciarCategoria('naturaleza')">
+                <span class="emoji">🌞</span>
+                <h3>Naturaleza</h3>
+                <p>Elementos de la naturaleza</p>
+            </div>
+            <div class="categoria-card" onclick="iniciarCategoria('colores')">
+                <span class="emoji">🌈</span>
+                <h3>Colores</h3>
+                <p>Aprende los colores básicos</p>
+            </div>
+            <div class="categoria-card" onclick="iniciarCategoria('casa')">
+                <span class="emoji">🏠</span>
+                <h3>En Casa</h3>
+                <p>Objetos y lugares del hogar</p>
+            </div>
+        </div>
+
+        <!-- Contenedor de ejercicios -->
+        <div id="contenedor-ejercicios" class="oculto">
             <!-- Los ejercicios se cargarán aquí -->
         </div>
 
-        <div id="resultado" class="resultado"></div>
+        <div id="resultado" class="resultado oculto"></div>
 
         <div class="botones-container">
-            <button id="siguiente-btn" class="btn btn-siguiente" style="display: none;">🚀 Siguiente Palabra</button>
-            <button id="reiniciar-btn" class="btn btn-menu" style="display: none;">🏠 Volver al Menú</button>
+            <button id="siguiente-btn" class="btn btn-siguiente oculto">🚀 Siguiente Palabra</button>
+            <button id="reiniciar-btn" class="btn btn-menu oculto">🏠 Volver al Menú</button>
         </div>
     </div>
 
     <script>
-        const palabras = [
-            {
-                imagen: "https://cdn.pixabay.com/photo/2017/06/02/18/24/fruit-2367029_640.jpg",
-                pregunta: "¿Cómo se llama esta fruta roja y dulce?",
-                opciones: ["Manzana", "Plátano", "Naranja", "Uva"],
-                correcta: 0
-            },
-            {
-                imagen: "https://cdn.pixabay.com/photo/2014/09/03/20/15/hurricane-434531_640.jpg",
-                pregunta: "¿Cómo se llama este animal que vive en el agua?",
-                opciones: ["Gato", "Perro", "Pez", "Pájaro"],
-                correcta: 2
-            },
-            {
-                imagen: "https://cdn.pixabay.com/photo/2017/05/04/16/37/meeting-2284501_640.jpg",
-                pregunta: "¿Qué usamos para escribir?",
-                opciones: ["Tenedor", "Lápiz", "Cuchara", "Vaso"],
-                correcta: 1
-            },
-            {
-                imagen: "https://cdn.pixabay.com/photo/2015/07/02/20/57/sun-829717_640.jpg",
-                pregunta: "¿Cómo se llama lo que nos da luz durante el día?",
-                opciones: ["Luna", "Estrella", "Sol", "Nube"],
-                correcta: 2
-            },
-            {
-                imagen: "https://cdn.pixabay.com/photo/2017/02/15/10/39/salad-2068217_640.jpg",
-                pregunta: "¿De qué color son las hojas de los árboles?",
-                opciones: ["Rojo", "Azul", "Verde", "Amarillo"],
-                correcta: 2
-            },
-            {
-                imagen: "https://cdn.pixabay.com/photo/2016/12/13/05/15/puppy-1903313_640.jpg",
-                pregunta: "¿Cómo se llama este animal que ladra?",
-                opciones: ["Gato", "Perro", "Pájaro", "Pez"],
-                correcta: 1
-            },
-            {
-                imagen: "https://cdn.pixabay.com/photo/2017/08/30/01/05/milky-way-2695569_640.jpg",
-                pregunta: "¿Qué vemos en el cielo durante la noche?",
-                opciones: ["Sol", "Estrellas", "Arcoíris", "Nubes"],
-                correcta: 1
-            },
-            {
-                imagen: "https://cdn.pixabay.com/photo/2016/02/10/21/59/landscape-1192669_640.jpg",
-                pregunta: "¿Dónde crecen las flores?",
-                opciones: ["En el agua", "En el jardín", "En el cielo", "En la casa"],
-                correcta: 1
-            }
-        ];
+        const categorias = {
+            frutas: [
+                {
+                    imagen: "img/vocab/manza.png",
+                    pregunta: "¿Cómo se llama esta fruta roja y dulce?",
+                    opciones: ["Manzana", "Plátano", "Naranja", "Uva"],
+                    correcta: 0
+                },
+                {
+                    imagen: "img/vocab/platano.jpg",
+                    pregunta: "¿Cómo se llama esta fruta amarilla y alargada?",
+                    opciones: ["Manzana", "Plátano", "Limón", "Piña"],
+                    correcta: 1
+                },
+                {
+                    imagen: "https://cdn.pixabay.com/photo/2017/01/20/15/06/orange-1995056_640.jpg",
+                    pregunta: "¿Cómo se llama esta fruta cítrica de color naranja?",
+                    opciones: ["Limón", "Manzana", "Naranja", "Pera"],
+                    correcta: 2
+                },
+                {
+                    imagen: "https://cdn.pixabay.com/photo/2017/09/26/13/42/apple-2788662_640.jpg",
+                    pregunta: "¿De qué color es esta manzana?",
+                    opciones: ["Azul", "Roja", "Morado", "Rosa"],
+                    correcta: 1
+                },
+                {
+                    imagen: "https://cdn.pixabay.com/photo/2016/04/15/08/04/strawberries-1330459_640.jpg",
+                    pregunta: "¿Cómo se llaman estas frutas rojas pequeñas?",
+                    opciones: ["Cerezas", "Fresas", "Tomates", "Manzanas"],
+                    correcta: 1
+                }
+            ],
+            animales: [
+                {
+                    imagen: "https://cdn.pixabay.com/photo/2016/12/13/05/15/puppy-1903313_640.jpg",
+                    pregunta: "¿Cómo se llama este animal que ladra?",
+                    opciones: ["Gato", "Perro", "Pájaro", "Pez"],
+                    correcta: 1
+                },
+                {
+                    imagen: "https://cdn.pixabay.com/photo/2014/04/13/20/49/cat-323262_640.jpg",
+                    pregunta: "¿Cómo se llama este animal que hace 'miau'?",
+                    opciones: ["Perro", "Gato", "Ratón", "Conejo"],
+                    correcta: 1
+                },
+                {
+                    imagen: "https://cdn.pixabay.com/photo/2017/02/07/16/47/kingfisher-2046453_640.jpg",
+                    pregunta: "¿Cómo se llama este animal que vuela?",
+                    opciones: ["Pez", "Perro", "Pájaro", "Gato"],
+                    correcta: 2
+                },
+                {
+                    imagen: "https://cdn.pixabay.com/photo/2018/03/31/06/31/dog-3277416_640.jpg",
+                    pregunta: "¿Cuántas patas tiene un perro?",
+                    opciones: ["Dos", "Tres", "Cuatro", "Cinco"],
+                    correcta: 2
+                },
+                {
+                    imagen: "https://cdn.pixabay.com/photo/2017/07/24/19/57/tiger-2535888_640.jpg",
+                    pregunta: "¿Cómo se llama este animal grande con rayas?",
+                    opciones: ["León", "Tigre", "Leopardo", "Gato"],
+                    correcta: 1
+                }
+            ],
+            utiles: [
+                {
+                    imagen: "img/vocab/lapiz.jpg",
+                    pregunta: "¿Qué usamos para escribir?",
+                    opciones: ["Tenedor", "Lápiz", "Cuchara", "Vaso"],
+                    correcta: 1
+                },
+                {
+                    imagen: "img/vocab/images.jpg",
+                    pregunta: "¿En qué escribimos las tareas?",
+                    opciones: ["Cuaderno", "Plato", "Zapato", "Sombrero"],
+                    correcta: 0
+                },
+                {
+                    imagen: "img/vocab/borrador.jpg",
+                    pregunta: "¿Qué usamos para borrar?",
+                    opciones: ["Lápiz", "Regla", "Borrador", "Tijeras"],
+                    correcta: 2
+                },
+                {
+                    imagen: "img/vocab/mochis.jpg",
+                    pregunta: "¿Dónde guardamos los útiles escolares?",
+                    opciones: ["Refrigerador", "Mochila", "Cama", "Televisor"],
+                    correcta: 1
+                },
+                {
+                    imagen: "img/vocab/tijuas.png",
+                    pregunta: "¿Con qué cortamos papel?",
+                    opciones: ["Cuchillo", "Tijeras", "Tenedor", "Cuchara"],
+                    correcta: 1
+                }
+            ],
+            naturaleza: [
+                {
+                    imagen: "img/vocab/señorsol.jpg",
+                    pregunta: "¿Cómo se llama lo que nos da luz durante el día?",
+                    opciones: ["Luna", "Estrella", "Sol", "Nube"],
+                    correcta: 2
+                },
+                {
+                    imagen: "https://cdn.pixabay.com/photo/2017/08/30/01/05/milky-way-2695569_640.jpg",
+                    pregunta: "¿Qué vemos en el cielo durante la noche?",
+                    opciones: ["Sol", "Estrellas", "Arcoíris", "Nubes"],
+                    correcta: 1
+                },
+                {
+                    imagen: "https://cdn.pixabay.com/photo/2016/02/10/21/59/landscape-1192669_640.jpg",
+                    pregunta: "¿Dónde crecen las flores?",
+                    opciones: ["En el agua", "En la tierra", "En el cielo", "En la casa"],
+                    correcta: 1
+                },
+                {
+                    imagen: "https://cdn.pixabay.com/photo/2017/05/08/13/15/spring-bird-2295436_640.jpg",
+                    pregunta: "¿En qué estación del año florecen muchas plantas?",
+                    opciones: ["Invierno", "Primavera", "Otoño", "Verano"],
+                    correcta: 1
+                },
+                {
+                    imagen: "img/vocab/montañon.jpg",
+                    pregunta: "¿Cómo se llama una colina muy alta?",
+                    opciones: ["Valle", "Río", "Montaña", "Lago"],
+                    correcta: 2
+                }
+            ],
+            colores: [
+                {
+                    imagen: "img/vocab/arbol.jpg",
+                    pregunta: "¿De qué color son las hojas de los árboles?",
+                    opciones: ["Rojo", "Azul", "Verde", "Amarillo"],
+                    correcta: 2
+                },
+                {
+                    imagen: "img/vocab/cielito.jpg",
+                    pregunta: "¿De qué color es el cielo durante el día?",
+                    opciones: ["Verde", "Azul", "Rojo", "Morado"],
+                    correcta: 1
+                },
+                {
+                    imagen: "img/vocab/fuego.jpg",
+                    pregunta: "¿De qué color es el fuego?",
+                    opciones: ["Azul", "Verde", "Rojo", "Morado"],
+                    correcta: 2
+                },
+                {
+                    imagen: "img/vocab/giragira.jpg",
+                    pregunta: "¿De qué color son las hojas de un girasol?",
+                    opciones: ["Amarillo", "Azul", "Verde", "Rojo"],
+                    correcta: 0
+                },
+                {
+                    imagen: "img/vocab/arco.jpg",
+                    pregunta: "¿Cuántos colores tiene el arcoíris?",
+                    opciones: ["Cinco", "Seis", "Siete", "Ocho"],
+                    correcta: 2
+                }
+            ],
+            casa: [
+                {
+                    imagen: "https://cdn.pixabay.com/photo/2016/11/18/17/20/couch-1835923_640.jpg",
+                    pregunta: "¿Dónde nos sentamos para descansar?",
+                    opciones: ["Mesa", "Alfombra", "Cama", "Sofá"],
+                    correcta: 3
+                },
+                {
+                    imagen: "img/vocab/camon.jpg",
+                    pregunta: "¿Dónde dormimos por la noche?",
+                    opciones: ["Cocina", "Baño", "Dormitorio", "Jardín"],
+                    correcta: 2
+                },
+                {
+                    imagen: "img/vocab/meson.jpg",
+                    pregunta: "¿Dónde comemos en familia?",
+                    opciones: ["Baño", "Mesa", "Cama", "Sofá"],
+                    correcta: 1
+                },
+                {
+                    imagen: "https://cdn.pixabay.com/photo/2016/12/30/07/59/kitchen-1940174_640.jpg",
+                    pregunta: "¿Dónde cocinamos la comida?",
+                    opciones: ["Baño", "Cocina", "Dormitorio", "Sala"],
+                    correcta: 1
+                },
+                {
+                    imagen: "https://cdn.pixabay.com/photo/2017/09/09/18/25/living-room-2732939_640.jpg",
+                    pregunta: "¿Cómo se llama la habitación donde vemos televisión?",
+                    opciones: ["Cocina", "Baño", "Sala", "Dormitorio"],
+                    correcta: 2
+                }
+            ]
+        };
 
+        let categoriaActual = null;
         let palabraActual = 0;
         let puntaje = 0;
         let respondido = false;
+        let palabrasCategoria = [];
+
+        function iniciarCategoria(categoria) {
+            categoriaActual = categoria;
+            palabrasCategoria = categorias[categoria];
+            palabraActual = 0;
+            puntaje = 0;
+            respondido = false;
+
+            // Ocultar menú y mostrar ejercicios
+            document.getElementById('menu-principal').classList.add('oculto');
+            document.getElementById('contenedor-ejercicios').classList.remove('oculto');
+            document.getElementById('progress-section').classList.remove('oculto');
+            document.getElementById('progress-text').classList.remove('oculto');
+            document.getElementById('resultado').classList.remove('oculto');
+
+            cargarPalabra();
+        }
 
         function actualizarProgreso() {
-            const progreso = ((palabraActual + 1) / palabras.length) * 100;
+            const progreso = ((palabraActual + 1) / palabrasCategoria.length) * 100;
             document.getElementById("progress-bar").style.width = progreso + "%";
-            document.getElementById("progress-text").textContent = `Palabra ${palabraActual + 1} de ${palabras.length}`;
+            document.getElementById("progress-text").textContent = `Palabra ${palabraActual + 1} de ${palabrasCategoria.length}`;
         }
 
         function cargarPalabra() {
-            const palabra = palabras[palabraActual];
+            const palabra = palabrasCategoria[palabraActual];
             let opcionesHTML = '';
             
             palabra.opciones.forEach((opcion, index) => {
@@ -489,7 +725,7 @@
             if (respondido) return;
             
             respondido = true;
-            const palabra = palabras[palabraActual];
+            const palabra = palabrasCategoria[palabraActual];
             const opciones = document.querySelectorAll('.opcion');
             const resultadoDiv = document.getElementById("resultado");
             
@@ -513,12 +749,13 @@
                 }
                 
                 document.getElementById("siguiente-btn").style.display = "inline-block";
+                document.getElementById("siguiente-btn").classList.remove('oculto');
             }, 1000);
         }
 
         document.getElementById("siguiente-btn").addEventListener("click", function() {
             palabraActual++;
-            if (palabraActual < palabras.length) {
+            if (palabraActual < palabrasCategoria.length) {
                 cargarPalabra();
             } else {
                 mostrarResultadoFinal();
@@ -526,7 +763,7 @@
         });
 
         function mostrarResultadoFinal() {
-            const porcentaje = Math.round((puntaje / palabras.length) * 100);
+            const porcentaje = Math.round((puntaje / palabrasCategoria.length) * 100);
             let mensaje = "";
             let emoji = "";
             
@@ -548,7 +785,7 @@
                 <div class="ejercicio-card final-card">
                     <h3>${emoji} ${mensaje} ${emoji}</h3>
                     <div class="puntaje">
-                        Conociste ${puntaje} de ${palabras.length} palabras
+                        Conociste ${puntaje} de ${palabrasCategoria.length} palabras
                         <br>
                         (${porcentaje}%)
                     </div>
@@ -560,18 +797,38 @@
             
             document.getElementById("resultado").innerHTML = "";
             document.getElementById("siguiente-btn").style.display = "none";
+            document.getElementById("siguiente-btn").classList.add('oculto');
             document.getElementById("reiniciar-btn").style.display = "inline-block";
+            document.getElementById("reiniciar-btn").classList.remove('oculto');
             
             document.getElementById("progress-bar").style.width = "100%";
             document.getElementById("progress-text").textContent = "¡Completado!";
         }
 
-        document.getElementById("reiniciar-btn").addEventListener("click", function() {
-            window.location.href = "index.html";
-        });
+        function volverAlMenu() {
+            // Mostrar menú y ocultar ejercicios
+            document.getElementById('menu-principal').classList.remove('oculto');
+            document.getElementById('contenedor-ejercicios').classList.add('oculto');
+            document.getElementById('progress-section').classList.add('oculto');
+            document.getElementById('progress-text').classList.add('oculto');
+            document.getElementById('resultado').classList.add('oculto');
+            document.getElementById('siguiente-btn').classList.add('oculto');
+            document.getElementById('reiniciar-btn').classList.add('oculto');
+            
+            // Resetear variables
+            categoriaActual = null;
+            palabraActual = 0;
+            puntaje = 0;
+            respondido = false;
+            palabrasCategoria = [];
+        }
 
-        // Iniciar la aplicación
-        cargarPalabra();
+        document.getElementById("reiniciar-btn").addEventListener("click", volverAlMenu);
+
+        // Inicializar la aplicación mostrando el menú
+        document.addEventListener('DOMContentLoaded', function() {
+            volverAlMenu();
+        });
     </script>
 </body>
 </html>
