@@ -3,64 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>¡Matemáticas Divertidas!</title>
+    <title>Matemáticas Básicas | EducaTech</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Nunito:wght@400;600;700;800&display=swap');
-        
+        :root {
+            --color-primario: #2E86C1;
+            --color-secundario: #F39C12;
+            --color-acento: #E74C3C;
+            --color-exito: #27AE60;
+            --color-fondo: #F8F9FA;
+            --color-fondo-card: #FFFFFF;
+            --sombra-card: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --sombra-hover: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Nunito', sans-serif;
         }
 
         body {
-            font-family: 'Nunito', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
+            color: #333;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 800px;
             margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: var(--sombra-card);
+            backdrop-filter: blur(10px);
         }
 
         .header {
             text-align: center;
             margin-bottom: 30px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 25px;
-            padding: 25px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
         }
 
         .header h1 {
-            font-family: 'Fredoka One', cursive;
             font-size: 2.5em;
-            color: #4c51bf;
+            color: var(--color-primario);
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .progress-container {
             background: rgba(255, 255, 255, 0.9);
             border-radius: 20px;
             padding: 15px;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+            box-shadow: var(--sombra-card);
         }
 
         .progress-bar {
-            background: linear-gradient(90deg, #ff6b6b, #ffa726);
-            height: 12px;
+            height: 15px;
+            background: linear-gradient(90deg, #4ECDC4, #44A08D);
             border-radius: 10px;
             transition: width 0.5s ease;
             position: relative;
             overflow: hidden;
         }
 
-        .progress-bar::before {
+        .progress-bar::after {
             content: '';
             position: absolute;
             top: 0;
@@ -72,478 +80,459 @@
         }
 
         @keyframes shimmer {
-            0% { left: -100%; }
             100% { left: 100%; }
         }
 
-        .ejercicio-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 25px;
-            padding: 30px;
-            margin: 20px 0;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-            border: 3px solid transparent;
-            background-clip: padding-box;
-            transform: scale(0.95);
-            animation: slideIn 0.5s ease forwards;
+        .exercise-container {
+            text-align: center;
+            margin: 30px 0;
         }
 
-        @keyframes slideIn {
-            to {
-                transform: scale(1);
-            }
-        }
-
-        .pregunta {
-            font-size: 1.4em;
-            color: #4c51bf;
+        .exercise-question {
+            font-size: 2em;
             font-weight: 700;
-            margin-bottom: 20px;
-            text-align: center;
-            line-height: 1.4;
+            color: var(--color-primario);
+            margin: 20px 0;
+            min-height: 60px;
         }
 
-        .imagen-container {
-            text-align: center;
-            margin: 25px 0;
-            position: relative;
-        }
-
-        .ejercicio-img {
-            max-width: 200px;
-            height: auto;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-            transition: transform 0.3s ease;
-        }
-
-        .ejercicio-img:hover {
-            transform: scale(1.05) rotate(2deg);
-        }
-
-        .operacion-container {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 20px;
-            padding: 25px;
-            margin: 25px 0;
-            text-align: center;
-            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .operacion {
-            font-size: 2.2em;
-            color: white;
-            font-weight: 800;
-            font-family: 'Fredoka One', cursive;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .input-respuesta {
-            font-size: 1.8em;
-            width: 80px;
+        .answer-input {
+            font-size: 1.5em;
+            width: 100px;
             height: 60px;
             text-align: center;
-            border: 4px solid #ffa726;
-            border-radius: 15px;
-            background: white;
-            color: #4c51bf;
-            font-weight: 800;
-            font-family: 'Fredoka One', cursive;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .input-respuesta:focus {
-            outline: none;
-            border-color: #ff6b6b;
-            transform: scale(1.1);
-            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
-        }
-
-        .botones-container {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 25px;
-            flex-wrap: wrap;
+            border: 3px solid var(--color-secundario);
+            border-radius: 10px;
+            margin: 0 10px;
         }
 
         .btn {
-            padding: 15px 30px;
+            padding: 12px 25px;
             border: none;
             border-radius: 50px;
             font-size: 1.1em;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-family: 'Nunito', sans-serif;
-            position: relative;
-            overflow: hidden;
+            margin: 10px;
             min-width: 150px;
         }
 
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            transition: all 0.5s ease;
-            transform: translate(-50%, -50%);
-        }
-
-        .btn:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-
-        .btn-verificar {
-            background: linear-gradient(135deg, #ff6b6b, #ffa726);
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-primario), #5D6FD3);
             color: white;
-            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+            box-shadow: 0 5px 15px rgba(46, 134, 193, 0.3);
         }
 
-        .btn-verificar:hover {
+        .btn-primary:hover:not(:disabled) {
             transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(255, 107, 107, 0.4);
+            box-shadow: 0 8px 20px rgba(46, 134, 193, 0.4);
         }
 
-        .btn-siguiente {
-            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--color-secundario), #F5B041);
             color: white;
-            box-shadow: 0 8px 25px rgba(78, 205, 196, 0.3);
+            box-shadow: 0 5px 15px rgba(243, 156, 18, 0.3);
         }
 
-        .btn-siguiente:hover {
+        .btn-secondary:hover {
             transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(78, 205, 196, 0.4);
+            box-shadow: 0 8px 20px rgba(243, 156, 18, 0.4);
         }
 
-        .btn-menu {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+        .btn-accent {
+            background: linear-gradient(135deg, var(--color-acento), #E91E63);
             color: white;
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 5px 15px rgba(231, 30, 99, 0.3);
         }
 
-        .btn-menu:hover {
+        .btn-accent:hover {
             transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 8px 20px rgba(231, 30, 99, 0.4);
         }
 
         .btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
-            transform: none !important;
         }
 
-        .resultado {
-            font-weight: 800;
+        .timer {
+            font-size: 1.2em;
+            color: var(--color-acento);
+            font-weight: 700;
+            margin: 15px 0;
+        }
+
+        .results-container {
+            display: none;
+            text-align: center;
+            animation: fadeIn 0.8s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .medal-container {
+            margin: 30px 0;
+            animation: bounce 1s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .medal {
+            width: 150px;
+            height: 150px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.2));
+        }
+
+        .gold-medal {
+            color: #FFD700;
+        }
+
+        .silver-medal {
+            color: #C0C0C0;
+        }
+
+        .bronze-medal {
+            color: #CD7F32;
+        }
+
+        .score-display {
             font-size: 1.5em;
             margin: 20px 0;
-            text-align: center;
-            padding: 20px;
-            border-radius: 20px;
-            min-height: 60px;
+            color: var(--color-primario);
+            font-weight: 700;
+        }
+
+        .next-section-buttons {
             display: flex;
-            align-items: center;
             justify-content: center;
-            transition: all 0.5s ease;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
         }
 
-        .correcto {
-            background: linear-gradient(135deg, #4ecdc4, #44a08d);
-            color: white;
-            animation: bounceIn 0.6s ease;
-        }
-
-        .incorrecto {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
-            color: white;
-            animation: shake 0.6s ease;
-        }
-
-        @keyframes bounceIn {
-            0% { transform: scale(0.3); opacity: 0; }
-            50% { transform: scale(1.05); }
-            70% { transform: scale(0.9); }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
-            20%, 40%, 60%, 80% { transform: translateX(10px); }
-        }
-
-        .final-card {
-            text-align: center;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 40px;
-            border-radius: 25px;
-            animation: celebrar 2s ease infinite alternate;
-        }
-
-        @keyframes celebrar {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.02); }
-        }
-
-        .final-card h3 {
-            font-family: 'Fredoka One', cursive;
-            font-size: 2.2em;
-            margin-bottom: 20px;
-        }
-
-        .puntaje {
-            font-size: 1.8em;
-            font-weight: 800;
-            margin: 20px 0;
+        .feedback {
             padding: 15px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
+            margin: 15px 0;
+            border-radius: 10px;
+            font-weight: bold;
+            animation: fadeIn 0.5s ease;
         }
 
-        .floating-elements {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
+        .correct {
+            background: linear-gradient(135deg, #4ECDC4, #44A08D);
+            color: white;
         }
 
-        .floating-element {
-            position: absolute;
-            font-size: 2em;
-            animation: float 6s ease-in-out infinite;
-            opacity: 0.1;
-        }
-
-        .floating-element:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
-        .floating-element:nth-child(2) { top: 20%; right: 10%; animation-delay: 1s; }
-        .floating-element:nth-child(3) { bottom: 30%; left: 20%; animation-delay: 2s; }
-        .floating-element:nth-child(4) { bottom: 10%; right: 20%; animation-delay: 3s; }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(180deg); }
+        .incorrect {
+            background: linear-gradient(135deg, #FF6B6B, #EE5A52);
+            color: white;
         }
 
         @media (max-width: 768px) {
-            .container { padding: 10px; }
-            .header h1 { font-size: 2em; }
-            .operacion { font-size: 1.8em; }
-            .input-respuesta { width: 70px; height: 50px; font-size: 1.5em; }
-            .btn { padding: 12px 20px; font-size: 1em; min-width: 120px; }
-            .botones-container { flex-direction: column; align-items: center; }
+            .container {
+                padding: 20px;
+            }
+            
+            .exercise-question {
+                font-size: 1.8em;
+            }
+            
+            .answer-input {
+                font-size: 1.2em;
+                width: 80px;
+                height: 50px;
+            }
+            
+            .btn {
+                min-width: 120px;
+                padding: 10px 20px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="floating-elements">
-        <div class="floating-element">🔢</div>
-        <div class="floating-element">➕</div>
-        <div class="floating-element">➖</div>
-        <div class="floating-element">✨</div>
-    </div>
-
     <div class="container">
-        <div class="header">
-            <h1>🧮 ¡Matemáticas Súper Divertidas! 🎉</h1>
+        <header class="header">
+            <h1>🧮 Matemáticas Básicas</h1>
+            <p>Resuelve estos ejercicios para ganar tu medalla</p>
+            
             <div class="progress-container">
                 <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+                <p id="progress-text">Ejercicio 1 de 16</p>
+                <div class="timer" id="timer">Tiempo: 0s</div>
             </div>
-            <p id="progress-text">Ejercicio 1 de 5</p>
-        </div>
+        </header>
 
-        <div id="contenedor-ejercicios">
-            <!-- Los ejercicios se cargarán aquí -->
-        </div>
+        <main id="exercise-content">
+            <div class="exercise-container">
+                <div class="exercise-question" id="exercise-question"></div>
+                <input type="number" id="answer-input" class="answer-input" placeholder="?">
+                <button id="check-btn" class="btn btn-primary" disabled>Comprobar</button>
+                <div id="feedback" class="feedback" style="display: none;"></div>
+            </div>
+        </main>
 
-        <div id="resultado" class="resultado"></div>
-
-        <div class="botones-container">
-            <button id="verificar-btn" class="btn btn-verificar">🎯 ¡Comprobar!</button>
-            <button id="siguiente-btn" class="btn btn-siguiente" style="display: none;">🚀 Siguiente</button>
-            <button id="reiniciar-btn" class="btn btn-menu" style="display: none;">🏠 Volver al Menú</button>
+        <div id="results-container" class="results-container">
+            <div class="medal-container">
+                <img id="medal-img" src="medals/bronze.png" alt="Medalla" class="medal">
+                <h3 id="medal-message"></h3>
+            </div>
+            <div class="score-display">
+                <p>Obtuviste <span id="correct-answers">0</span> de <span id="total-questions">16</span> correctas</p>
+            </div>
+            <div class="next-section-buttons">
+                <button id="try-again-btn" class="btn btn-secondary">🔁 Intentar de nuevo</button>
+                <button id="menu-btn" class="btn btn-primary">🏠 Volver al Menú</button>
+                <button id="advanced-btn" class="btn btn-accent" style="display: none;">🚀 Ir a Matemáticas Avanzadas</button>
+            </div>
         </div>
     </div>
 
     <script>
-        const ejercicios = [
-            {
-                pregunta: "🍐 Hay 5 peras deliciosas y me como 2. ¿Cuántas peras me quedan?",
-                operacion: "5 - 2 =",
-                respuesta: 3,
-                imagen: "https://cdn.pixabay.com/photo/2017/09/12/11/56/pears-2742299_640.png"
-            },
-            {
-                pregunta: "🧁 Tengo 6 magdalenas ricas y me como 2. ¿Cuántas magdalenas quedan?",
-                operacion: "6 - 2 =",
-                respuesta: 4,
-                imagen: "https://cdn.pixabay.com/photo/2017/01/11/11/33/cake-1971552_640.jpg"
-            },
-            {
-                pregunta: "🍪 Tenía 10 galletas crujientes. Si me como 3, ¿cuántas me quedan?",
-                operacion: "10 - 3 =",
-                respuesta: 7,
-                imagen: "https://cdn.pixabay.com/photo/2014/01/20/18/25/cookie-248636_640.jpg"
-            },
-            {
-                pregunta: "🐞 Tengo 7 mariquitas bonitas y encuentro 3 más. ¿Cuántas tengo en total?",
-                operacion: "7 + 3 =",
-                respuesta: 10,
-                imagen: "https://cdn.pixabay.com/photo/2017/07/04/10/07/ladybug-2469988_640.png"
-            },
-            {
-                pregunta: "🌸 Tengo 5 flores hermosas y encuentro 3 más. ¿Cuántas tengo en total?",
-                operacion: "5 + 3 =",
-                respuesta: 8,
-                imagen: "https://cdn.pixabay.com/photo/2017/05/07/19/32/flowers-2295431_640.jpg"
-            }
+        // Ejercicios de suma básica
+        const exercises = [
+            { question: "6 + 3", answer: 9 },
+            { question: "2 + 4", answer: 6 },
+            { question: "5 + 1", answer: 6 },
+            { question: "8 + 2", answer: 10 },
+            { question: "7 + 3", answer: 10 },
+            { question: "2 + 7", answer: 9 },
+            { question: "9 + 1", answer: 10 },
+            { question: "5 + 2", answer: 7 },
+            { question: "6 + 4", answer: 10 },
+            { question: "2 + 2", answer: 4 },
+            { question: "5 + 7", answer: 12 },
+            { question: "7 + 2", answer: 9 },
+            { question: "5 + 3", answer: 8 },
+            { question: "2 + 9", answer: 11 },
+            { question: "4 + 1", answer: 5 },
+            { question: "5 + 7", answer: 12 }
         ];
 
-        let ejercicioActual = 0;
-        let puntaje = 0;
-        let esperandoRespuesta = false;
+        // Variables del juego
+        let currentExercise = 0;
+        let correctAnswers = 0;
+        let startTime;
+        let timerInterval;
+        let answerSubmitted = false;
 
-        function actualizarProgreso() {
-            const progreso = ((ejercicioActual + 1) / ejercicios.length) * 100;
-            document.getElementById("progress-bar").style.width = progreso + "%";
-            document.getElementById("progress-text").textContent = `Ejercicio ${ejercicioActual + 1} de ${ejercicios.length}`;
+        // Elementos del DOM
+        const exerciseQuestion = document.getElementById('exercise-question');
+        const answerInput = document.getElementById('answer-input');
+        const checkBtn = document.getElementById('check-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+        const timerElement = document.getElementById('timer');
+        const resultsContainer = document.getElementById('results-container');
+        const exerciseContent = document.getElementById('exercise-content');
+        const correctAnswersSpan = document.getElementById('correct-answers');
+        const totalQuestionsSpan = document.getElementById('total-questions');
+        const medalImg = document.getElementById('medal-img');
+        const medalMessage = document.getElementById('medal-message');
+        const tryAgainBtn = document.getElementById('try-again-btn');
+        const menuBtn = document.getElementById('menu-btn');
+        const advancedBtn = document.getElementById('advanced-btn');
+        const feedbackDiv = document.getElementById('feedback');
+
+        // Iniciar el juego
+        function startGame() {
+            currentExercise = 0;
+            correctAnswers = 0;
+            answerSubmitted = false;
+            startTimer();
+            loadExercise();
         }
 
-        function cargarEjercicio() {
-            const ejercicio = ejercicios[ejercicioActual];
-            document.getElementById("contenedor-ejercicios").innerHTML = `
-                <div class="ejercicio-card">
-                    <div class="pregunta">${ejercicio.pregunta}</div>
-                    <div class="imagen-container">
-                        <img src="${ejercicio.imagen}" alt="Imagen del ejercicio" class="ejercicio-img">
-                    </div>
-                    <div class="operacion-container">
-                        <div class="operacion">
-                            ${ejercicio.operacion.split('=')[0]} = 
-                            <input type="number" id="respuesta" class="input-respuesta" inputmode="numeric" placeholder="?">
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById("resultado").innerHTML = "";
-            document.getElementById("resultado").className = "resultado";
-            document.getElementById("verificar-btn").style.display = "inline-block";
-            document.getElementById("siguiente-btn").style.display = "none";
-            document.getElementById("verificar-btn").disabled = false;
-            
-            actualizarProgreso();
-            document.getElementById("respuesta").focus();
-            
-            document.getElementById("respuesta").addEventListener("keypress", function(e) {
-                if (e.key === "Enter" && !esperandoRespuesta) {
-                    verificarRespuesta();
-                }
-            });
+        // Temporizador
+        function startTimer() {
+            startTime = new Date();
+            clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimer, 1000);
         }
 
-        function verificarRespuesta() {
-            if (esperandoRespuesta) return;
-            
-            esperandoRespuesta = true;
-            const botonVerificar = document.getElementById("verificar-btn");
-            botonVerificar.disabled = true;
-            
-            const respuestaInput = document.getElementById("respuesta");
-            const respuestaUsuario = parseInt(respuestaInput.value);
-            const respuestaCorrecta = ejercicios[ejercicioActual].respuesta;
-            const resultadoDiv = document.getElementById("resultado");
-
-            setTimeout(() => {
-                if (respuestaUsuario === respuestaCorrecta) {
-                    resultadoDiv.innerHTML = "🎉 ¡Excelente! ¡Eres increíble! 🌟";
-                    resultadoDiv.className = "resultado correcto";
-                    puntaje++;
-                } else {
-                    resultadoDiv.innerHTML = `😊 ¡Casi! La respuesta correcta es: ${respuestaCorrecta}`;
-                    resultadoDiv.className = "resultado incorrecto";
-                }
-
-                document.getElementById("verificar-btn").style.display = "none";
-                document.getElementById("siguiente-btn").style.display = "inline-block";
-                esperandoRespuesta = false;
-            }, 500);
+        function updateTimer() {
+            const currentTime = new Date();
+            const elapsed = Math.floor((currentTime - startTime) / 1000);
+            timerElement.textContent = `Tiempo: ${elapsed}s`;
         }
 
-        document.getElementById("siguiente-btn").addEventListener("click", function() {
-            ejercicioActual++;
-            if (ejercicioActual < ejercicios.length) {
-                cargarEjercicio();
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+
+        // Cargar ejercicio actual
+        function loadExercise() {
+            answerSubmitted = false;
+            checkBtn.disabled = true;
+            
+            if (currentExercise < exercises.length) {
+                const exercise = exercises[currentExercise];
+                exerciseQuestion.textContent = exercise.question + " =";
+                answerInput.value = '';
+                answerInput.focus();
+                updateProgress();
+                
+                // Habilitar input
+                answerInput.disabled = false;
+                feedbackDiv.style.display = 'none';
             } else {
-                mostrarResultadoFinal();
+                showResults();
+            }
+        }
+
+        // Actualizar barra de progreso
+        function updateProgress() {
+            const progress = ((currentExercise) / exercises.length) * 100;
+            progressBar.style.width = progress + '%';
+            progressText.textContent = `Ejercicio ${currentExercise + 1} de ${exercises.length}`;
+        }
+
+        // Verificar respuesta
+        function checkAnswer() {
+            if (answerSubmitted) return;
+            
+            answerSubmitted = true;
+            const userAnswer = parseInt(answerInput.value);
+            const correctAnswer = exercises[currentExercise].answer;
+
+            if (isNaN(userAnswer)) {
+                feedbackDiv.textContent = "Por favor ingresa un número";
+                feedbackDiv.className = "feedback incorrect";
+                feedbackDiv.style.display = 'block';
+                answerSubmitted = false;
+                return;
+            }
+
+            // Deshabilitar input y botón
+            answerInput.disabled = true;
+            checkBtn.disabled = true;
+
+            if (userAnswer === correctAnswer) {
+                correctAnswers++;
+                showFeedback(true);
+            } else {
+                showFeedback(false, correctAnswer);
+            }
+
+            // Esperar 2 segundos antes de pasar al siguiente ejercicio
+            setTimeout(() => {
+                currentExercise++;
+                loadExercise();
+            }, 2000);
+        }
+
+        // Mostrar retroalimentación
+        function showFeedback(isCorrect, correctAnswer = null) {
+            if (isCorrect) {
+                feedbackDiv.textContent = '✅ ¡Correcto! ¡Buen trabajo!';
+                feedbackDiv.className = "feedback correct";
+            } else {
+                feedbackDiv.textContent = `❌ ¡Casi! La respuesta correcta es ${correctAnswer}`;
+                feedbackDiv.className = "feedback incorrect";
+            }
+            feedbackDiv.style.display = 'block';
+        }
+
+        // Mostrar resultados finales
+        function showResults() {
+            stopTimer();
+            const percentage = Math.round((correctAnswers / exercises.length) * 100);
+            let medalType, medalColor, message;
+            let canAdvance = false;
+
+            // Determinar medalla y si puede avanzar
+            if (percentage === 100) {
+                medalType = "gold";
+                medalColor = "gold-medal";
+                message = "¡Medalla de Oro! ¡Perfecto! 🏆";
+                canAdvance = true;
+            } else if (percentage >= 70) {
+                medalType = "silver";
+                medalColor = "silver-medal";
+                message = "¡Medalla de Plata! Casi lo logras 👍 (Necesitas 100% para avanzar)";
+            } else {
+                medalType = "bronze";
+                medalColor = "bronze-medal";
+                message = "¡Medalla de Bronce! Sigue practicando 💪 (Necesitas 100% para avanzar)";
+            }
+
+            // Configurar imagen de medalla
+            medalImg.src = `medals/${medalType}.png`;
+            medalImg.alt = `Medalla de ${medalType}`;
+            medalImg.className = `medal ${medalColor}`;
+            
+            medalMessage.textContent = message;
+            correctAnswersSpan.textContent = correctAnswers;
+            totalQuestionsSpan.textContent = exercises.length;
+
+            // Mostrar u ocultar botón de avanzar según el resultado
+            if (canAdvance) {
+                advancedBtn.style.display = 'inline-block';
+            } else {
+                advancedBtn.style.display = 'none';
+            }
+
+            exerciseContent.style.display = 'none';
+            resultsContainer.style.display = 'block';
+
+            // Guardar progreso
+            saveProgress(medalType, canAdvance);
+        }
+
+        // Guardar progreso en localStorage
+        function saveProgress(medal, canAdvance) {
+            const progress = JSON.parse(localStorage.getItem('mathProgress')) || {};
+            
+            progress.lastPlayed = new Date().toISOString();
+            progress.lastMedal = medal;
+            progress.lastScore = correctAnswers;
+            progress.canAdvance = canAdvance;
+            progress.totalCompleted = (progress.totalCompleted || 0) + exercises.length;
+            
+            localStorage.setItem('mathProgress', JSON.stringify(progress));
+        }
+
+        // Reiniciar juego
+        function resetGame() {
+            exerciseContent.style.display = 'block';
+            resultsContainer.style.display = 'none';
+            startGame();
+        }
+
+        // Event Listeners
+        checkBtn.addEventListener('click', checkAnswer);
+        answerInput.addEventListener('input', function() {
+            checkBtn.disabled = this.value === '';
+        });
+        answerInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !checkBtn.disabled) {
+                checkAnswer();
             }
         });
-
-        function mostrarResultadoFinal() {
-            const porcentaje = Math.round((puntaje / ejercicios.length) * 100);
-            let mensaje = "";
-            let emoji = "";
-            
-            if (porcentaje === 100) {
-                mensaje = "¡PERFECTO! ¡Eres un genio de las matemáticas!";
-                emoji = "🏆✨";
-            } else if (porcentaje >= 80) {
-                mensaje = "¡Excelente trabajo! ¡Eres muy inteligente!";
-                emoji = "🥇🌟";
-            } else if (porcentaje >= 60) {
-                mensaje = "¡Buen trabajo! ¡Sigues mejorando!";
-                emoji = "🥈👏";
-            } else {
-                mensaje = "¡Sigue practicando! ¡Tú puedes!";
-                emoji = "🥉💪";
-            }
-
-            document.getElementById("contenedor-ejercicios").innerHTML = `
-                <div class="ejercicio-card final-card">
-                    <h3>${emoji} ${mensaje} ${emoji}</h3>
-                    <div class="puntaje">
-                        Obtuviste ${puntaje} de ${ejercicios.length} correctos
-                        <br>
-                        (${porcentaje}%)
-                    </div>
-                    <div class="imagen-container">
-                        <img src="https://cdn.pixabay.com/photo/2016/08/12/20/14/medal-1589609_640.png" alt="Medalla" class="ejercicio-img">
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById("resultado").innerHTML = "";
-            document.getElementById("verificar-btn").style.display = "none";
-            document.getElementById("siguiente-btn").style.display = "none";
-            document.getElementById("reiniciar-btn").style.display = "inline-block";
-            
-            // Actualizar progreso al 100%
-            document.getElementById("progress-bar").style.width = "100%";
-            document.getElementById("progress-text").textContent = "¡Completado!";
-        }
-
-        document.getElementById("reiniciar-btn").addEventListener("click", function() {
+        tryAgainBtn.addEventListener('click', resetGame);
+        menuBtn.addEventListener('click', function() {
             window.location.href = "index.html";
         });
+        advancedBtn.addEventListener('click', function() {
+            window.location.href = "matematicas-avanzadas.html";
+        });
 
-        document.getElementById("verificar-btn").addEventListener("click", verificarRespuesta);
-
-        // Iniciar la aplicación
-        cargarEjercicio();
+        // Iniciar el juego al cargar la página
+        window.addEventListener('DOMContentLoaded', function() {
+            const progress = JSON.parse(localStorage.getItem('mathProgress')) || {};
+            if (progress.canAdvance) {
+                advancedBtn.style.display = 'inline-block';
+            }
+            startGame();
+        });
     </script>
 </body>
 </html>
