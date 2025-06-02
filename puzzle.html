@@ -3,671 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>¡Rompecabezas Divertido!</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Nunito:wght@400;600;700;800&display=swap');
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Nunito', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-            overflow-x: hidden;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 25px;
-            padding: 25px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-        }
-
-        .header h1 {
-            font-family: 'Fredoka One', cursive;
-            font-size: 2.5em;
-            color: #5b67d1;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .stats-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 20px;
-            padding: 15px 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        .stat {
-            text-align: center;
-            color: #5b67d1;
-            font-weight: 700;
-        }
-
-        .stat-number {
-            font-size: 1.5em;
-            font-family: 'Fredoka One', cursive;
-        }
-
-        .game-area {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-
-        .puzzle-container, .pieces-container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 25px;
-            padding: 25px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-        }
-
-        .section-title {
-            font-family: 'Fredoka One', cursive;
-            font-size: 1.3em;
-            color: #5b67d1;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .puzzle-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 5px;
-            max-width: 300px;
-            margin: 0 auto;
-            border: 3px solid #5b67d1;
-            border-radius: 15px;
-            padding: 10px;
-            background: #f8f9fa;
-        }
-
-        .puzzle-slot {
-            width: 80px;
-            height: 80px;
-            border: 2px dashed #ccc;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255, 255, 255, 0.7);
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .puzzle-slot.drag-over {
-            border-color: #4caf50;
-            background: rgba(76, 175, 80, 0.1);
-            transform: scale(1.05);
-        }
-
-        .puzzle-slot.filled {
-            border-color: #4caf50;
-            background: rgba(76, 175, 80, 0.1);
-        }
-
-        .pieces-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            max-width: 300px;
-            margin: 0 auto;
-            padding: 20px;
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            border-radius: 15px;
-        }
-
-        .puzzle-piece {
-            width: 70px;
-            height: 70px;
-            border-radius: 10px;
-            cursor: grab;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            position: relative;
-            overflow: hidden;
-            background-size: 240px 240px;
-            background-repeat: no-repeat;
-        }
-
-        .puzzle-piece.used {
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
-
-        .puzzle-piece:hover:not(.used) {
-            transform: scale(1.1) rotate(5deg);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-        }
-
-        .puzzle-piece:active:not(.used) {
-            cursor: grabbing;
-            transform: scale(1.15) rotate(10deg);
-        }
-
-        .puzzle-piece.dragging {
-            opacity: 0.7;
-            transform: scale(1.2) rotate(15deg);
-            z-index: 1000;
-        }
-
-        .puzzle-slot-filled {
-            background-size: 240px 240px;
-            background-repeat: no-repeat;
-            border: 2px solid #4caf50;
-        }
-
-        .puzzle-complete {
-            animation: celebrate 1s ease;
-        }
-
-        @keyframes celebrate {
-            0%, 100% { transform: scale(1); }
-            25% { transform: scale(1.05) rotate(2deg); }
-            50% { transform: scale(1.1); }
-            75% { transform: scale(1.05) rotate(-2deg); }
-        }
-
-        .botones-container {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 25px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 15px 30px;
-            border: none;
-            border-radius: 50px;
-            font-size: 1.1em;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Nunito', sans-serif;
-            position: relative;
-            overflow: hidden;
-            min-width: 150px;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            transition: all 0.5s ease;
-            transform: translate(-50%, -50%);
-        }
-
-        .btn:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-
-        .btn-nuevo {
-            background: linear-gradient(135deg, #4caf50, #66bb6a);
-            color: white;
-            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
-        }
-
-        .btn-nuevo:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(76, 175, 80, 0.4);
-        }
-
-        .btn-ayuda {
-            background: linear-gradient(135deg, #ff9800, #ffb74d);
-            color: white;
-            box-shadow: 0 8px 25px rgba(255, 152, 0, 0.3);
-        }
-
-        .btn-ayuda:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(255, 152, 0, 0.4);
-        }
-
-        .btn-menu {
-            background: linear-gradient(135deg, #5b67d1, #7c4dff);
-            color: white;
-            box-shadow: 0 8px 25px rgba(91, 103, 209, 0.3);
-        }
-
-        .btn-menu:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(91, 103, 209, 0.4);
-        }
-
-        .mensaje-exito {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: linear-gradient(135deg, #4caf50, #66bb6a);
-            color: white;
-            padding: 30px 40px;
-            border-radius: 25px;
-            font-size: 1.5em;
-            font-weight: 700;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            z-index: 2000;
-            opacity: 0;
-            animation: aparecer 0.5s ease forwards;
-        }
-
-        @keyframes aparecer {
-            to {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1.1);
-            }
-        }
-
-        .confetti {
-            position: fixed;
-            width: 10px;
-            height: 10px;
-            background: #4caf50;
-            animation: confetti-fall 3s linear infinite;
-        }
-
-        @keyframes confetti-fall {
-            to {
-                transform: translateY(100vh) rotate(360deg);
-            }
-        }
-
-        .floating-elements {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        .floating-element {
-            position: absolute;
-            font-size: 2em;
-            animation: float 8s ease-in-out infinite;
-            opacity: 0.1;
-        }
-
-        .floating-element:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
-        .floating-element:nth-child(2) { top: 20%; right: 10%; animation-delay: 2s; }
-        .floating-element:nth-child(3) { bottom: 30%; left: 20%; animation-delay: 4s; }
-        .floating-element:nth-child(4) { bottom: 10%; right: 20%; animation-delay: 6s; }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-30px) rotate(180deg); }
-        }
-
-        @media (max-width: 768px) {
-            .game-area {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            
-            .stats-container {
-                flex-direction: column;
-                gap: 10px;
-            }
-            
-            .puzzle-grid, .pieces-grid {
-                max-width: 250px;
-            }
-            
-            .puzzle-slot, .puzzle-piece {
-                width: 60px;
-                height: 60px;
-            }
-            
-            .header h1 {
-                font-size: 2em;
-            }
-        }
-    </style>
+    <title>Puzzles Educativos | EducaTech</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/puzzles.css">
 </head>
 <body>
     <div class="floating-elements">
         <div class="floating-element">🧩</div>
-        <div class="floating-element">🎨</div>
-        <div class="floating-element">🔧</div>
-        <div class="floating-element">✨</div>
+        <div class="floating-element">🦁</div>
+        <div class="floating-element">🍎</div>
+        <div class="floating-element">🌳</div>
     </div>
 
     <div class="container">
-        <div class="header">
-            <h1>🧩 ¡Rompecabezas Súper Divertido! 🎨</h1>
-        </div>
+        <header class="header">
+            <h1><span class="logo-icon">🧩</span> Puzzles Educativos</h1>
+            <p>Desarrolla tu lógica y habilidades espaciales</p>
+        </header>
 
-        <div class="stats-container">
-            <div class="stat">
-                <div class="stat-number" id="tiempo">0:00</div>
-                <div>Tiempo</div>
-            </div>
-            <div class="stat">
-                <div class="stat-number" id="movimientos">0</div>
-                <div>Movimientos</div>
-            </div>
-            <div class="stat">
-                <div class="stat-number" id="completados">0</div>
-                <div>Completados</div>
-            </div>
-        </div>
-
-        <div class="game-area">
-            <div class="puzzle-container">
-                <div class="section-title">🎯 Completa el Puzzle</div>
-                <div class="puzzle-grid" id="puzzle-grid">
-                    <!-- Se generarán las casillas aquí -->
+        <div class="category-selector" id="category-selector">
+            <h2>Elige una categoría:</h2>
+            <div class="categories-grid">
+                <div class="category-card" data-category="animales">
+                    <div class="category-icon">🐶</div>
+                    <h3>Animales</h3>
                 </div>
-            </div>
-
-            <div class="pieces-container">
-                <div class="section-title">🧩 Piezas del Puzzle</div>
-                <div class="pieces-grid" id="pieces-grid">
-                    <!-- Se generarán las piezas aquí -->
+                <div class="category-card" data-category="naturaleza">
+                    <div class="category-icon">🌳</div>
+                    <h3>Naturaleza</h3>
+                </div>
+                <div class="category-card" data-category="frutas">
+                    <div class="category-icon">🍎</div>
+                    <h3>Frutas</h3>
                 </div>
             </div>
         </div>
 
-        <div class="botones-container">
-            <button id="nuevo-puzzle" class="btn btn-nuevo">🎲 Nuevo Puzzle</button>
-            <button id="ayuda-btn" class="btn btn-ayuda">💡 Ayuda</button>
-            <button id="menu-btn" class="btn btn-menu">🏠 Menú</button>
+        <div class="game-container" id="game-container" style="display: none;">
+            <div class="stats-container">
+                <div class="stat">
+                    <div class="stat-number" id="tiempo">0:00</div>
+                    <div>Tiempo</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="movimientos">0</div>
+                    <div>Movimientos</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="puzzles-completados">0</div>
+                    <div>Completados</div>
+                </div>
+            </div>
+
+            <div class="puzzle-info">
+                <h2 id="puzzle-title">Puzzle de Animales</h2>
+                <div class="difficulty-selector">
+                    <button class="difficulty-btn active" data-difficulty="3">Fácil (3x3)</button>
+                    <button class="difficulty-btn" data-difficulty="4">Medio (4x4)</button>
+                    <button class="difficulty-btn" data-difficulty="5">Difícil (5x5)</button>
+                </div>
+            </div>
+
+            <div class="game-area">
+                <div class="puzzle-container">
+                    <div class="puzzle-grid" id="puzzle-grid"></div>
+                </div>
+                <div class="pieces-container">
+                    <div class="pieces-grid" id="pieces-grid"></div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button id="nuevo-puzzle" class="btn btn-primary">🔄 Nuevo Puzzle</button>
+                <button id="ayuda-btn" class="btn btn-secondary">💡 Ayuda</button>
+                <button id="volver-categorias" class="btn btn-accent">← Volver a Categorías</button>
+            </div>
+        </div>
+
+        <div class="results-container" id="results-container" style="display: none;">
+            <div class="medal-container">
+                <img id="medal-img" src="medals/bronze.png" alt="Medalla" class="medal">
+                <h3 id="medal-message"></h3>
+            </div>
+            <div class="stats-resumen">
+                <p><span id="resumen-tiempo">0:00</span> Tiempo</p>
+                <p><span id="resumen-movimientos">0</span> Movimientos</p>
+                <p><span id="resumen-dificultad">Fácil</span> Dificultad</p>
+            </div>
+            <div class="action-buttons">
+                <button id="jugar-otra-vez" class="btn btn-primary">🔄 Jugar otra vez</button>
+                <button id="volver-menu" class="btn btn-accent">🏠 Menú Principal</button>
+            </div>
         </div>
     </div>
 
-    <script>
-        const puzzleImages = [
-            {
-                name: "Gatito Adorable",
-                url: "https://cdn.pixabay.com/photo/2017/02/20/18/03/cat-2083492_640.jpg"
-            },
-            {
-                name: "Perrito Feliz",
-                url: "https://cdn.pixabay.com/photo/2016/12/13/05/15/puppy-1903313_640.jpg"
-            },
-            {
-                name: "Mariposa Colorida",
-                url: "https://cdn.pixabay.com/photo/2017/05/12/13/58/butterfly-2304663_640.jpg"
-            },
-            {
-                name: "Flores Hermosas",
-                url: "https://cdn.pixabay.com/photo/2017/05/07/19/32/flowers-2295431_640.jpg"
-            },
-            {
-                name: "Arcoíris Mágico",
-                url: "https://cdn.pixabay.com/photo/2016/07/07/16/46/mountains-1502435_640.jpg"
-            }
-        ];
-
-        let currentImageIndex = 0;
-        let startTime = null;
-        let timerInterval = null;
-        let movimientos = 0;
-        let completados = parseInt(localStorage.getItem('puzzlesCompletados') || '0');
-        let draggedElement = null;
-        let correctPlacements = 0;
-        let currentImageUrl = '';
-
-        function inicializarJuego() {
-            currentImageIndex = Math.floor(Math.random() * puzzleImages.length);
-            currentImageUrl = puzzleImages[currentImageIndex].url;
-            generarPuzzle();
-            reiniciarStats();
-            iniciarTimer();
-            actualizarContadorCompletados();
-        }
-
-        function generarPuzzle() {
-            const puzzleGrid = document.getElementById('puzzle-grid');
-            const piecesGrid = document.getElementById('pieces-grid');
-            
-            // Limpiar grids
-            puzzleGrid.innerHTML = '';
-            piecesGrid.innerHTML = '';
-            correctPlacements = 0;
-            
-            // Crear slots del puzzle (3x3)
-            for (let i = 0; i < 9; i++) {
-                const slot = document.createElement('div');
-                slot.className = 'puzzle-slot';
-                slot.dataset.position = i;
-                slot.addEventListener('dragover', handleDragOver);
-                slot.addEventListener('drop', handleDrop);
-                slot.addEventListener('dragleave', handleDragLeave);
-                puzzleGrid.appendChild(slot);
-            }
-            
-            // Crear piezas (mezcladas)
-            const pieces = Array.from({length: 9}, (_, i) => i);
-            shuffleArray(pieces);
-            
-            pieces.forEach((position, index) => {
-                const piece = document.createElement('div');
-                piece.className = 'puzzle-piece';
-                piece.draggable = true;
-                piece.dataset.correctPosition = position;
-                piece.dataset.currentIndex = index;
-                
-                // Calcular posición de la imagen de fondo
-                const row = Math.floor(position / 3);
-                const col = position % 3;
-                const bgPosX = -col * 80;
-                const bgPosY = -row * 80;
-                
-                piece.style.backgroundImage = `url(${currentImageUrl})`;
-                piece.style.backgroundPosition = `${bgPosX}px ${bgPosY}px`;
-                piece.style.backgroundSize = '240px 240px';
-                
-                piece.addEventListener('dragstart', handleDragStart);
-                piece.addEventListener('dragend', handleDragEnd);
-                
-                piecesGrid.appendChild(piece);
-            });
-        }
-
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-        }
-
-        function handleDragStart(e) {
-            if (e.target.classList.contains('used')) return;
-            draggedElement = e.target;
-            e.target.classList.add('dragging');
-        }
-
-        function handleDragEnd(e) {
-            e.target.classList.remove('dragging');
-            draggedElement = null;
-        }
-
-        function handleDragOver(e) {
-            e.preventDefault();
-            e.target.classList.add('drag-over');
-        }
-
-        function handleDragLeave(e) {
-            e.target.classList.remove('drag-over');
-        }
-
-        function handleDrop(e) {
-            e.preventDefault();
-            e.target.classList.remove('drag-over');
-            
-            if (!draggedElement || e.target.classList.contains('filled')) return;
-            
-            const dropPosition = parseInt(e.target.dataset.position);
-            const pieceCorrectPosition = parseInt(draggedElement.dataset.correctPosition);
-            
-            movimientos++;
-            actualizarMovimientos();
-            
-            if (dropPosition === pieceCorrectPosition) {
-                // Colocación correcta
-                const row = Math.floor(pieceCorrectPosition / 3);
-                const col = pieceCorrectPosition % 3;
-                const bgPosX = -col * 80;
-                const bgPosY = -row * 80;
-                
-                e.target.style.backgroundImage = `url(${currentImageUrl})`;
-                e.target.style.backgroundPosition = `${bgPosX}px ${bgPosY}px`;
-                e.target.style.backgroundSize = '240px 240px';
-                e.target.classList.add('filled');
-                
-                draggedElement.classList.add('used');
-                correctPlacements++;
-                
-                if (correctPlacements === 9) {
-                    completarPuzzle();
-                }
-            } else {
-                // Colocación incorrecta - efecto de rebote
-                draggedElement.style.animation = 'shake 0.5s ease-in-out';
-                setTimeout(() => {
-                    if (draggedElement) {
-                        draggedElement.style.animation = '';
-                    }
-                }, 500);
-            }
-        }
-
-        function completarPuzzle() {
-            clearInterval(timerInterval);
-            completados++;
-            localStorage.setItem('puzzlesCompletados', completados.toString());
-            actualizarContadorCompletados();
-            
-            document.querySelector('.puzzle-grid').classList.add('puzzle-complete');
-            
-            mostrarMensajeExito();
-            crearConfetti();
-        }
-
-        function mostrarMensajeExito() {
-            const mensaje = document.createElement('div');
-            mensaje.className = 'mensaje-exito';
-            mensaje.innerHTML = `
-                <div>🎉 ¡Felicitaciones! 🎉</div>
-                <div style="font-size: 0.8em; margin-top: 10px;">
-                    Completaste el puzzle de ${puzzleImages[currentImageIndex].name}
-                </div>
-            `;
-            document.body.appendChild(mensaje);
-            
-            setTimeout(() => {
-                mensaje.remove();
-            }, 3000);
-        }
-
-        function crearConfetti() {
-            for (let i = 0; i < 50; i++) {
-                setTimeout(() => {
-                    const confetti = document.createElement('div');
-                    confetti.className = 'confetti';
-                    confetti.style.left = Math.random() * 100 + 'vw';
-                    confetti.style.backgroundColor = ['#4caf50', '#2196f3', '#ff9800', '#e91e63', '#9c27b0'][Math.floor(Math.random() * 5)];
-                    confetti.style.animationDelay = Math.random() * 2 + 's';
-                    document.body.appendChild(confetti);
-                    
-                    setTimeout(() => confetti.remove(), 3000);
-                }, i * 100);
-            }
-        }
-
-        function reiniciarStats() {
-            movimientos = 0;
-            startTime = Date.now();
-            actualizarMovimientos();
-        }
-
-        function iniciarTimer() {
-            clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                const elapsed = Math.floor((Date.now() - startTime) / 1000);
-                const minutes = Math.floor(elapsed / 60);
-                const seconds = elapsed % 60;
-                document.getElementById('tiempo').textContent = 
-                    `${minutes}:${seconds.toString().padStart(2, '0')}`;
-            }, 1000);
-        }
-
-        function actualizarMovimientos() {
-            document.getElementById('movimientos').textContent = movimientos;
-        }
-
-        function actualizarContadorCompletados() {
-            document.getElementById('completados').textContent = completados;
-        }
-
-        function mostrarAyuda() {
-            const ayuda = `
-🎯 CÓMO JUGAR:
-
-1. Arrastra las piezas del lado derecho
-2. Suéltalas en la posición correcta del puzzle
-3. Las piezas solo encajan en su lugar correcto
-4. ¡Completa la imagen para ganar!
-
-💡 CONSEJOS:
-• Observa los colores y patrones
-• Empieza por las esquinas
-• Usa las formas como guía
-            `;
-            alert(ayuda);
-        }
-
-        // Event listeners
-        document.getElementById('nuevo-puzzle').addEventListener('click', inicializarJuego);
-        document.getElementById('ayuda-btn').addEventListener('click', mostrarAyuda);
-        document.getElementById('menu-btn').addEventListener('click', () => {
-            if (confirm('¿Deseas volver al menú principal?')) {
-                window.location.href = 'index.html';
-            }
-        });
-
-        // Agregar animación de shake
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes shake {
-                0%, 100% { transform: translateX(0); }
-                10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-                20%, 40%, 60%, 80% { transform: translateX(5px); }
-            }
-        `;
-        document.head.appendChild(style);
-
-        // Inicializar el juego al cargar la página
-        inicializarJuego();
-    </script>
+    <script src="js/puzzles.js"></script>
 </body>
 </html>
