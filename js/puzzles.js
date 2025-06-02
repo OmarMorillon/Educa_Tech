@@ -4,27 +4,27 @@ const puzzlesConfig = {
         name: "Animales",
         icon: "🐶",
         puzzles: [
-            { name: "Perrito Feliz", image: "puzzles/animales/puzzle1.jpg" },
-            { name: "Gatito Juguetón", image: "puzzles/animales/puzzle2.jpg" },
-            { name: "Pájaro Colorido", image: "puzzles/animales/puzzle3.jpg" }
+            { name: "Perrito Feliz", image: "puzzles/animales/puzzle1.jpeg" },
+            { name: "Gatito Juguetón", image: "puzzles/animales/puzzle2.jpeg" },
+            { name: "Pájaro Colorido", image: "puzzles/animales/puzzle3.jpeg" }
         ]
     },
     naturaleza: {
         name: "Naturaleza",
         icon: "🌳",
         puzzles: [
-            { name: "Bosque Encantado", image: "puzzles/naturaleza/puzzle1.jpg" },
-            { name: "Playa Hermosa", image: "puzzles/naturaleza/puzzle2.jpg" },
-            { name: "Montañas Nevadas", image: "puzzles/naturaleza/puzzle3.jpg" }
+            { name: "Arbol Lindo", image: "puzzles/naturaleza/puzzle1.jpeg" },
+            { name: "Flor Hermosa", image: "puzzles/naturaleza/puzzle2.jpeg" },
+            { name: "Isla Perdida", image: "puzzles/naturaleza/puzzle3.jpeg" }
         ]
     },
     frutas: {
         name: "Frutas",
         icon: "🍎",
         puzzles: [
-            { name: "Canasta de Frutas", image: "puzzles/frutas/puzzle1.jpg" },
-            { name: "Sandía Jugosa", image: "puzzles/frutas/puzzle2.jpg" },
-            { name: "Uvas Dulces", image: "puzzles/frutas/puzzle3.jpg" }
+            { name: "Manzana Fresca", image: "puzzles/frutas/puzzle1.jpeg" },
+            { name: "Sandía Jugosa", image: "puzzles/frutas/puzzle2.jpeg" },
+            { name: "Uvas y Fresa Dulces", image: "puzzles/frutas/puzzle3.jpeg" }
         ]
     }
 };
