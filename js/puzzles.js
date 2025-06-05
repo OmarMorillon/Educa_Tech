@@ -1,4 +1,4 @@
-// Configuración de puzzles por categoría (solo animales, frutas y naturaleza)
+// Configuración de puzzles por categoría
 const puzzlesConfig = {
     animales: {
         name: "Animales",
@@ -37,11 +37,11 @@ let startTime = null;
 let timerInterval = null;
 let movimientos = 0;
 let completados = parseInt(localStorage.getItem('puzzlesCompletados') || '0');
-let draggedElement = null;
 let correctPlacements = 0;
 let currentImageUrl = '';
 let completedPuzzlesInCategory = 0;
 const MAX_PUZZLES_PER_CATEGORY = 3;
+let selectedPiece = null;
 
 // Elementos del DOM
 const categorySelector = document.getElementById('category-selector');
@@ -105,6 +105,7 @@ function showCategories() {
 function generatePuzzle() {
     movimientos = 0;
     correctPlacements = 0;
+    selectedPiece = null;
     startTime = Date.now();
     movimientosElement.textContent = movimientos;
     
@@ -125,6 +126,7 @@ function generatePuzzle() {
     currentImageUrl = categoryPuzzles[currentPuzzleIndex].image;
     puzzleTitle.textContent = `${puzzlesConfig[currentCategory].name}: ${categoryPuzzles[currentPuzzleIndex].name}`;
     
+    // Crear slots del puzzle
     for (let i = 0; i < gridSize; i++) {
         const slot = document.createElement('div');
         slot.className = 'puzzle-slot';
@@ -132,20 +134,17 @@ function generatePuzzle() {
         slot.style.width = `${cellSize}px`;
         slot.style.height = `${cellSize}px`;
         
-        slot.addEventListener('dragover', handleDragOver);
-        slot.addEventListener('drop', handleDrop);
-        slot.addEventListener('dragleave', handleDragLeave);
-        
+        slot.addEventListener('click', () => handleSlotClick(slot));
         puzzleGrid.appendChild(slot);
     }
     
+    // Crear piezas del puzzle
     const pieces = Array.from({length: gridSize}, (_, i) => i);
     shuffleArray(pieces);
     
     pieces.forEach((position, index) => {
         const piece = document.createElement('div');
         piece.className = 'puzzle-piece';
-        piece.draggable = true;
         piece.dataset.correctPosition = position;
         piece.dataset.currentIndex = index;
         piece.style.width = `${cellSize - 10}px`;
@@ -161,11 +160,10 @@ function generatePuzzle() {
         piece.style.backgroundPosition = `${bgPosX}px ${bgPosY}px`;
         piece.style.backgroundSize = `${bgSize}px ${bgSize}px`;
         
-        piece.addEventListener('dragstart', handleDragStart);
-        piece.addEventListener('dragend', handleDragEnd);
-        piece.addEventListener('touchstart', handleTouchStart, {passive: false});
-        piece.addEventListener('touchmove', handleTouchMove, {passive: false});
-        piece.addEventListener('touchend', handleTouchEnd);
+        piece.addEventListener('click', (e) => {
+            e.stopPropagation();
+            handlePieceClick(piece);
+        });
         
         piecesGrid.appendChild(piece);
     });
@@ -173,140 +171,46 @@ function generatePuzzle() {
     startTimer();
 }
 
-// Funciones de arrastre para desktop
-function handleDragStart(e) {
-    if (e.target.classList.contains('used')) {
-        e.preventDefault();
+function handlePieceClick(piece) {
+    // Deseleccionar si ya está seleccionada
+    if (selectedPiece === piece) {
+        selectedPiece.classList.remove('selected');
+        selectedPiece = null;
         return;
     }
-    draggedElement = e.target;
-    e.target.classList.add('dragging');
-    e.dataTransfer.setData('text/plain', e.target.dataset.correctPosition);
-}
-
-function handleDragEnd(e) {
-    e.target.classList.remove('dragging');
-    draggedElement = null;
-}
-
-function handleDragOver(e) {
-    e.preventDefault();
-    e.target.classList.add('drag-over');
-}
-
-function handleDragLeave(e) {
-    e.target.classList.remove('drag-over');
-}
-
-function handleDrop(e) {
-    e.preventDefault();
-    e.target.classList.remove('drag-over');
     
-    if (!draggedElement || e.target.classList.contains('filled')) return;
+    // Deseleccionar cualquier pieza previa
+    if (selectedPiece) {
+        selectedPiece.classList.remove('selected');
+    }
     
-    const dropPosition = parseInt(e.target.dataset.position);
-    const pieceCorrectPosition = parseInt(draggedElement.dataset.correctPosition);
+    // Seleccionar la nueva pieza
+    selectedPiece = piece;
+    piece.classList.add('selected');
+}
+
+function handleSlotClick(slot) {
+    if (!selectedPiece || slot.classList.contains('filled')) return;
+    
+    const dropPosition = parseInt(slot.dataset.position);
+    const pieceCorrectPosition = parseInt(selectedPiece.dataset.correctPosition);
     
     movimientos++;
     movimientosElement.textContent = movimientos;
     
     if (dropPosition === pieceCorrectPosition) {
-        placePieceCorrectly(e.target, draggedElement, pieceCorrectPosition);
+        placePieceCorrectly(slot, selectedPiece, pieceCorrectPosition);
         correctPlacements++;
         
         if (correctPlacements === difficulty * difficulty) {
             completePuzzle();
         }
     } else {
-        showIncorrectFeedback(draggedElement);
-    }
-}
-
-// Funciones de touch para móviles mejoradas
-let touchStartX = 0;
-let touchStartY = 0;
-let touchElement = null;
-let touchOffsetX = 0;
-let touchOffsetY = 0;
-
-function handleTouchStart(e) {
-    if (e.target.classList.contains('used')) {
-        e.preventDefault();
-        return;
+        showIncorrectFeedback(selectedPiece);
     }
     
-    e.preventDefault();
-    
-    touchElement = e.target;
-    const touch = e.touches[0];
-    const rect = touchElement.getBoundingClientRect();
-    
-    touchStartX = touch.clientX;
-    touchStartY = touch.clientY;
-    touchOffsetX = touch.clientX - rect.left;
-    touchOffsetY = touch.clientY - rect.top;
-    
-    touchElement.classList.add('dragging');
-    touchElement.style.position = 'fixed';
-    touchElement.style.zIndex = '1000';
-    touchElement.style.transform = 'scale(1.1)';
-    touchElement.style.transition = 'none';
-    
-    document.body.style.overflow = 'hidden';
-}
-
-function handleTouchMove(e) {
-    if (!touchElement) return;
-    e.preventDefault();
-    
-    const touch = e.touches[0];
-    const newX = touch.clientX - touchOffsetX;
-    const newY = touch.clientY - touchOffsetY;
-    
-    touchElement.style.left = `${newX}px`;
-    touchElement.style.top = `${newY}px`;
-}
-
-function handleTouchEnd(e) {
-    if (!touchElement) return;
-    
-    document.body.style.overflow = '';
-    
-    const touch = e.changedTouches[0];
-    const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
-    
-    touchElement.classList.remove('dragging');
-    touchElement.style.position = '';
-    touchElement.style.left = '';
-    touchElement.style.top = '';
-    touchElement.style.zIndex = '';
-    touchElement.style.transform = '';
-    touchElement.style.transition = '';
-    
-    if (elementBelow && elementBelow.classList.contains('puzzle-slot') && 
-        !elementBelow.classList.contains('filled')) {
-        
-        const dropPosition = parseInt(elementBelow.dataset.position);
-        const pieceCorrectPosition = parseInt(touchElement.dataset.correctPosition);
-        
-        movimientos++;
-        movimientosElement.textContent = movimientos;
-        
-        if (dropPosition === pieceCorrectPosition) {
-            placePieceCorrectly(elementBelow, touchElement, pieceCorrectPosition);
-            correctPlacements++;
-            
-            if (correctPlacements === difficulty * difficulty) {
-                completePuzzle();
-            }
-        } else {
-            showIncorrectFeedback(touchElement);
-        }
-    } else {
-        touchElement.style.transition = 'all 0.3s ease';
-    }
-    
-    touchElement = null;
+    selectedPiece.classList.remove('selected');
+    selectedPiece = null;
 }
 
 function placePieceCorrectly(slot, piece, position) {
@@ -323,11 +227,7 @@ function placePieceCorrectly(slot, piece, position) {
     slot.classList.add('filled');
     
     piece.classList.add('used');
-    piece.style.position = '';
-    piece.style.left = '';
-    piece.style.top = '';
-    piece.style.zIndex = '';
-    piece.style.transform = '';
+    piece.style.display = 'none'; // Ocultar la pieza de la cuadrícula derecha
 }
 
 function showIncorrectFeedback(element) {
@@ -335,11 +235,6 @@ function showIncorrectFeedback(element) {
     setTimeout(() => {
         if (element) {
             element.style.animation = '';
-            element.style.position = '';
-            element.style.left = '';
-            element.style.top = '';
-            element.style.zIndex = '';
-            element.style.transform = '';
         }
     }, 500);
 }
@@ -349,6 +244,11 @@ function completePuzzle() {
     completados++;
     completedPuzzlesInCategory++;
     localStorage.setItem('puzzlesCompletados', completados.toString());
+    
+    // Restablecer el botón "Jugar Otra Vez" a su estado original
+    const jugarOtraVezBtn = document.getElementById('jugar-otra-vez');
+    jugarOtraVezBtn.textContent = '↻ Jugar Otra Vez';
+    jugarOtraVezBtn.onclick = generatePuzzle;
     
     if (completedPuzzlesInCategory >= MAX_PUZZLES_PER_CATEGORY) {
         showCategoryCompletion();
@@ -368,7 +268,7 @@ function showResults() {
     resumenDificultad.textContent = 
         difficulty === 3 ? 'Fácil' : difficulty === 4 ? 'Medio' : 'Difícil';
     
-    let medalType, medalColor, message;
+    let medalType, message;
     const tiempoLimiteOro = difficulty === 3 ? 60 : difficulty === 4 ? 120 : 180;
     const movimientosLimiteOro = difficulty === 3 ? 15 : difficulty === 4 ? 30 : 45;
     
@@ -408,8 +308,14 @@ function showCategoryCompletion() {
     resumenMovimientos.textContent = movimientos;
     resumenDificultad.textContent = difficulty === 3 ? 'Fácil' : difficulty === 4 ? 'Medio' : 'Difícil';
     
-    document.getElementById('jugar-otra-vez').textContent = '🔁 Otra categoría';
-    document.getElementById('jugar-otra-vez').onclick = showCategories;
+    const jugarOtraVezBtn = document.getElementById('jugar-otra-vez');
+    jugarOtraVezBtn.textContent = '🔁 Otra categoría';
+    jugarOtraVezBtn.onclick = function() {
+        showCategories();
+        // Resetear el botón para futuros usos
+        jugarOtraVezBtn.textContent = '↻ Jugar Otra Vez';
+        jugarOtraVezBtn.onclick = generatePuzzle;
+    };
     
     gameContainer.style.display = 'none';
     resultsContainer.style.display = 'block';
@@ -436,21 +342,21 @@ function showHelp() {
     const ayuda = `
 🎯 CÓMO JUGAR:
 
-1. Toca y arrastra las piezas del lado derecho
-2. Suéltalas en la posición correcta del puzzle
+1. Haz clic/toca una pieza para seleccionarla
+2. Haz clic/toca en un espacio vacío para colocarla
 3. Las piezas solo encajan en su lugar correcto
 4. ¡Completa la imagen para ganar!
 
 💡 CONSEJOS:
 • Observa los colores y patrones
 • Empieza por las esquinas y bordes
-• Usa las formas como guía
+• Las piezas seleccionadas se resaltan
 • ¡No te rindas! Puedes intentarlo cuantas veces quieras
     `;
     alert(ayuda);
 }
 
-// Estilo para animación de shake y mejoras móviles
+// Estilos dinámicos
 const style = document.createElement('style');
 style.textContent = `
     @keyframes shake {
@@ -460,14 +366,22 @@ style.textContent = `
     }
     
     .puzzle-piece {
-        touch-action: none;
-        user-select: none;
-        -webkit-user-drag: none;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+    
+    .puzzle-piece.selected {
+        transform: scale(1.1);
+        box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        z-index: 10;
     }
     
     .puzzle-piece:active {
         transform: scale(1.05);
-        opacity: 0.9;
+    }
+    
+    .puzzle-slot {
+        cursor: pointer;
     }
     
     @media (max-width: 768px) {
@@ -478,6 +392,17 @@ style.textContent = `
         
         #puzzle-grid, #pieces-grid {
             gap: 5px;
+        }
+        
+        .puzzle-piece.selected {
+            transform: scale(1.05);
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .puzzle-piece, .puzzle-slot {
+            width: 60px !important;
+            height: 60px !important;
         }
     }
 `;
