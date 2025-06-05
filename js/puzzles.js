@@ -222,20 +222,37 @@ function handleDrop(e) {
     }
 }
 
-// Funciones de touch para móviles
+// Funciones de touch para móviles mejoradas
 let touchStartX = 0;
 let touchStartY = 0;
 let touchElement = null;
+let touchOffsetX = 0;
+let touchOffsetY = 0;
 
 function handleTouchStart(e) {
     if (e.target.classList.contains('used')) {
         e.preventDefault();
         return;
     }
+    
+    e.preventDefault();
+    
     touchElement = e.target;
-    touchStartX = e.touches[0].clientX;
-    touchStartY = e.touches[0].clientY;
-    e.target.classList.add('dragging');
+    const touch = e.touches[0];
+    const rect = touchElement.getBoundingClientRect();
+    
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+    touchOffsetX = touch.clientX - rect.left;
+    touchOffsetY = touch.clientY - rect.top;
+    
+    touchElement.classList.add('dragging');
+    touchElement.style.position = 'fixed';
+    touchElement.style.zIndex = '1000';
+    touchElement.style.transform = 'scale(1.1)';
+    touchElement.style.transition = 'none';
+    
+    document.body.style.overflow = 'hidden';
 }
 
 function handleTouchMove(e) {
@@ -243,21 +260,28 @@ function handleTouchMove(e) {
     e.preventDefault();
     
     const touch = e.touches[0];
-    const deltaX = touch.clientX - touchStartX;
-    const deltaY = touch.clientY - touchStartY;
+    const newX = touch.clientX - touchOffsetX;
+    const newY = touch.clientY - touchOffsetY;
     
-    touchElement.style.position = 'absolute';
-    touchElement.style.left = `${touch.clientX - touchElement.offsetWidth / 2}px`;
-    touchElement.style.top = `${touch.clientY - touchElement.offsetHeight / 2}px`;
-    touchElement.style.zIndex = '1000';
-    touchElement.style.transform = 'scale(1.2)';
+    touchElement.style.left = `${newX}px`;
+    touchElement.style.top = `${newY}px`;
 }
 
 function handleTouchEnd(e) {
     if (!touchElement) return;
     
+    document.body.style.overflow = '';
+    
     const touch = e.changedTouches[0];
     const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+    
+    touchElement.classList.remove('dragging');
+    touchElement.style.position = '';
+    touchElement.style.left = '';
+    touchElement.style.top = '';
+    touchElement.style.zIndex = '';
+    touchElement.style.transform = '';
+    touchElement.style.transition = '';
     
     if (elementBelow && elementBelow.classList.contains('puzzle-slot') && 
         !elementBelow.classList.contains('filled')) {
@@ -279,14 +303,9 @@ function handleTouchEnd(e) {
             showIncorrectFeedback(touchElement);
         }
     } else {
-        touchElement.style.position = '';
-        touchElement.style.left = '';
-        touchElement.style.top = '';
-        touchElement.style.zIndex = '';
-        touchElement.style.transform = '';
+        touchElement.style.transition = 'all 0.3s ease';
     }
     
-    touchElement.classList.remove('dragging');
     touchElement = null;
 }
 
@@ -431,13 +450,35 @@ function showHelp() {
     alert(ayuda);
 }
 
-// Estilo para animación de shake
+// Estilo para animación de shake y mejoras móviles
 const style = document.createElement('style');
 style.textContent = `
     @keyframes shake {
         0%, 100% { transform: translateX(0); }
         10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
         20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+    
+    .puzzle-piece {
+        touch-action: none;
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+    
+    .puzzle-piece:active {
+        transform: scale(1.05);
+        opacity: 0.9;
+    }
+    
+    @media (max-width: 768px) {
+        .puzzle-piece, .puzzle-slot {
+            width: 70px !important;
+            height: 70px !important;
+        }
+        
+        #puzzle-grid, #pieces-grid {
+            gap: 5px;
+        }
     }
 `;
 document.head.appendChild(style);
